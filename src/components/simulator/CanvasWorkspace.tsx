@@ -134,7 +134,7 @@ export function CanvasWorkspace({
       onMouseLeave={handleMouseUp}
     >
       {/* Wire overlay - render behind components */}
-      {hasArduino && <WireOverlay components={components} wires={wires} />}
+      {hasArduino && <WireOverlay components={components} wires={wires} isRunning={isRunning} />}
 
       {/* Empty state */}
       {components.length === 0 && (

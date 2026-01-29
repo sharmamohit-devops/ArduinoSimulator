@@ -1,37 +1,66 @@
-import { PlacedComponent, Wire } from '@/types/simulator';
+import { PlacedComponent, Wire, DigitalPin } from '@/types/simulator';
 import { useMemo } from 'react';
 
 interface WireOverlayProps {
   components: PlacedComponent[];
   wires: Wire[];
+  isRunning?: boolean;
 }
 
-// Get component center position
-function getComponentCenter(component: PlacedComponent): { x: number; y: number } {
-  switch (component.type) {
-    case 'arduino-uno':
-      return { x: component.x + 60, y: component.y + 40 };
-    case 'led':
-      return { x: component.x + 24, y: component.y + 50 };
-    case 'push-button':
-      return { x: component.x + 28, y: component.y + 28 };
-    default:
-      return { x: component.x + 30, y: component.y + 30 };
-  }
-}
+// Component connection point offsets (relative to component position)
+const COMPONENT_CONNECTIONS: Record<string, { x: number; y: number }> = {
+  'led': { x: 24, y: 58 },        // Bottom center of LED (anode leg)
+  'push-button': { x: 28, y: 48 }, // Bottom of button
+};
 
-// Get pin position on Arduino (approximate)
-function getArduinoPinPosition(arduino: PlacedComponent, pin: number): { x: number; y: number } {
+// Get Arduino pin positions (digital pins D0-D13 on top row)
+function getArduinoPinPosition(arduino: PlacedComponent, pin: DigitalPin): { x: number; y: number } {
   // Digital pins are on top row, pins 0-13
-  // Each pin is spaced 6 units apart, starting at x offset 24
+  // Starting at x=24, each pin is 6 units apart
   const xOffset = 24 + pin * 6 + 1.75;
   return {
     x: arduino.x + xOffset,
-    y: arduino.y + 10,
+    y: arduino.y + 11, // Top edge pin position
   };
 }
 
-export function WireOverlay({ components, wires }: WireOverlayProps) {
+// Get component connection point
+function getComponentConnectionPoint(component: PlacedComponent): { x: number; y: number } {
+  const offset = COMPONENT_CONNECTIONS[component.type] || { x: 30, y: 30 };
+  return {
+    x: component.x + offset.x,
+    y: component.y + offset.y,
+  };
+}
+
+// Generate a smooth wire path with right-angle routing
+function generateWirePath(
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  color: string
+): string {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  
+  // Determine routing based on relative positions
+  if (Math.abs(dy) < 20) {
+    // Nearly horizontal - use simple curve
+    const midX = (from.x + to.x) / 2;
+    return `M ${from.x} ${from.y} 
+            C ${midX} ${from.y}, ${midX} ${to.y}, ${to.x} ${to.y}`;
+  }
+  
+  // Create a path that goes up/down then across
+  const bendY = from.y + (dy > 0 ? -30 : 30); // Go opposite direction first
+  const routeY = to.y - 20; // Come in from above the Arduino pins
+  
+  return `M ${from.x} ${from.y}
+          L ${from.x} ${bendY}
+          Q ${from.x} ${routeY}, ${(from.x + to.x) / 2} ${routeY}
+          Q ${to.x} ${routeY}, ${to.x} ${to.y}`;
+}
+
+export function WireOverlay({ components, wires, isRunning = false }: WireOverlayProps) {
   const wirePaths = useMemo(() => {
     return wires.map((wire) => {
       const fromComponent = components.find((c) => c.instanceId === wire.fromComponent);
@@ -39,17 +68,9 @@ export function WireOverlay({ components, wires }: WireOverlayProps) {
 
       if (!fromComponent || !toComponent) return null;
 
-      const from = getComponentCenter(fromComponent);
+      const from = getComponentConnectionPoint(fromComponent);
       const to = getArduinoPinPosition(toComponent as PlacedComponent, wire.fromPin);
-
-      // Create a curved path
-      const midY = (from.y + to.y) / 2;
-      const controlOffset = Math.abs(from.x - to.x) * 0.3;
-
-      const path = `M ${from.x} ${from.y} 
-                    C ${from.x} ${midY - controlOffset}, 
-                      ${to.x} ${midY + controlOffset}, 
-                      ${to.x} ${to.y}`;
+      const path = generateWirePath(from, to, wire.color);
 
       return {
         id: wire.id,
@@ -60,6 +81,7 @@ export function WireOverlay({ components, wires }: WireOverlayProps) {
         fromY: from.y,
         toX: to.x,
         toY: to.y,
+        componentType: fromComponent.type,
       };
     }).filter(Boolean);
   }, [components, wires]);
@@ -68,86 +90,172 @@ export function WireOverlay({ components, wires }: WireOverlayProps) {
 
   return (
     <svg
-      className="absolute inset-0 pointer-events-none z-5"
+      className="absolute inset-0 pointer-events-none"
+      style={{ zIndex: 5, overflow: 'visible' }}
       width="100%"
       height="100%"
-      style={{ overflow: 'visible' }}
     >
       <defs>
-        {/* Wire glow filter */}
-        <filter id="wireGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+        {/* Wire glow filter for active simulation */}
+        <filter id="wireGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="3" result="coloredBlur" />
           <feMerge>
             <feMergeNode in="coloredBlur" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        
+        {/* Subtle shadow for depth */}
+        <filter id="wireShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="1" dy="2" stdDeviation="2" floodOpacity="0.3" />
+        </filter>
+
+        {/* Animated dash pattern for running simulation */}
+        <pattern id="flowPattern" patternUnits="userSpaceOnUse" width="12" height="1">
+          <rect width="6" height="1" fill="white" opacity="0.4">
+            <animate 
+              attributeName="x" 
+              from="0" 
+              to="12" 
+              dur="0.5s" 
+              repeatCount="indefinite" 
+            />
+          </rect>
+        </pattern>
       </defs>
 
       {wirePaths.map((wire) => wire && (
         <g key={wire.id}>
-          {/* Wire shadow */}
+          {/* Wire shadow for depth */}
           <path
             d={wire.path}
-            stroke="rgba(0,0,0,0.2)"
-            strokeWidth="4"
+            stroke="rgba(0,0,0,0.15)"
+            strokeWidth="5"
             fill="none"
             strokeLinecap="round"
+            strokeLinejoin="round"
+            transform="translate(1, 2)"
           />
           
-          {/* Main wire */}
+          {/* Main wire body */}
           <path
             d={wire.path}
             stroke={wire.color}
-            strokeWidth="2.5"
+            strokeWidth="3"
             fill="none"
             strokeLinecap="round"
-            filter="url(#wireGlow)"
+            strokeLinejoin="round"
+            filter={isRunning ? "url(#wireGlow)" : "none"}
+            style={{
+              transition: 'filter 0.3s ease',
+            }}
           />
 
-          {/* Wire highlight */}
+          {/* Wire highlight (makes it look 3D) */}
           <path
             d={wire.path}
-            stroke="rgba(255,255,255,0.3)"
+            stroke="rgba(255,255,255,0.25)"
             strokeWidth="1"
             fill="none"
             strokeLinecap="round"
-            strokeDasharray="4 8"
+            strokeLinejoin="round"
+            transform="translate(-0.5, -0.5)"
           />
 
-          {/* Pin label at Arduino end */}
-          <g transform={`translate(${wire.toX}, ${wire.toY - 14})`}>
-            <rect
-              x="-10"
-              y="-8"
-              width="20"
-              height="14"
-              rx="3"
+          {/* Flow animation when running */}
+          {isRunning && (
+            <path
+              d={wire.path}
+              stroke="url(#flowPattern)"
+              strokeWidth="3"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity="0.6"
+            />
+          )}
+
+          {/* Connection point at component end */}
+          <g transform={`translate(${wire.fromX}, ${wire.fromY})`}>
+            {/* Solder joint appearance */}
+            <circle
+              r="5"
               fill={wire.color}
-              opacity="0.9"
+              stroke="rgba(0,0,0,0.3)"
+              strokeWidth="1"
+            />
+            <circle
+              r="2.5"
+              fill="rgba(255,255,255,0.4)"
+              transform="translate(-1, -1)"
+            />
+          </g>
+
+          {/* Connection point at Arduino end */}
+          <g transform={`translate(${wire.toX}, ${wire.toY})`}>
+            <circle
+              r="4"
+              fill={wire.color}
+              stroke="rgba(0,0,0,0.3)"
+              strokeWidth="1"
+            />
+            <circle
+              r="1.5"
+              fill="rgba(255,255,255,0.4)"
+              transform="translate(-0.5, -0.5)"
+            />
+          </g>
+
+          {/* Pin label at Arduino end */}
+          <g transform={`translate(${wire.toX}, ${wire.toY - 16})`}>
+            <rect
+              x="-12"
+              y="-9"
+              width="24"
+              height="16"
+              rx="4"
+              fill={wire.color}
+              stroke="rgba(255,255,255,0.2)"
+              strokeWidth="1"
+              filter="url(#wireShadow)"
             />
             <text
               x="0"
-              y="2"
+              y="3"
               textAnchor="middle"
-              fontSize="8"
+              fontSize="9"
               fill="white"
-              fontFamily="monospace"
+              fontFamily="ui-monospace, monospace"
               fontWeight="bold"
             >
               D{wire.pin}
             </text>
           </g>
 
-          {/* Connection dot at component end */}
-          <circle
-            cx={wire.fromX}
-            cy={wire.fromY}
-            r="4"
-            fill={wire.color}
-            stroke="white"
-            strokeWidth="1"
-          />
+          {/* Component type label at component end */}
+          <g transform={`translate(${wire.fromX}, ${wire.fromY + 16})`}>
+            <rect
+              x="-16"
+              y="-7"
+              width="32"
+              height="14"
+              rx="3"
+              fill="rgba(0,0,0,0.7)"
+              stroke={wire.color}
+              strokeWidth="1"
+            />
+            <text
+              x="0"
+              y="3"
+              textAnchor="middle"
+              fontSize="7"
+              fill="white"
+              fontFamily="ui-sans-serif, sans-serif"
+              fontWeight="500"
+            >
+              {wire.componentType === 'led' ? 'ANODE' : 'SIG'}
+            </text>
+          </g>
         </g>
       ))}
     </svg>
