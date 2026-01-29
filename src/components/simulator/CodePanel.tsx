@@ -139,49 +139,49 @@ export function CodePanel({ components, isRunning }: CodePanelProps) {
   };
 
   return (
-    <div className="h-full flex flex-col code-panel border border-border/30 overflow-hidden">
+    <div className="h-full flex flex-col bg-code rounded-lg border border-border/40 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[hsl(220,30%,8%)] to-[hsl(220,25%,10%)] border-b border-border/30">
-        <div className="flex items-center gap-3">
-          <div className="flex gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-destructive/80 hover:bg-destructive cursor-pointer" />
-            <div className="w-3 h-3 rounded-full bg-warning/80 hover:bg-warning cursor-pointer" />
-            <div className="w-3 h-3 rounded-full bg-success/80 hover:bg-success cursor-pointer" />
+      <div className="flex items-center justify-between px-3 py-2 bg-muted/30 border-b border-border/30">
+        <div className="flex items-center gap-2.5">
+          <div className="flex gap-1">
+            <div className="w-2.5 h-2.5 rounded-full bg-destructive/60" />
+            <div className="w-2.5 h-2.5 rounded-full bg-warning/60" />
+            <div className="w-2.5 h-2.5 rounded-full bg-success/60" />
           </div>
-          <div className="flex items-center gap-2">
-            <Code className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-foreground">sketch.ino</span>
+          <div className="flex items-center gap-1.5">
+            <Code className="w-3.5 h-3.5 text-primary/70" />
+            <span className="text-xs font-medium text-foreground/80">sketch.ino</span>
           </div>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {isRunning && (
-            <span className="text-xs text-success flex items-center gap-1.5 bg-success/20 px-2 py-1 rounded-full font-medium">
-              <span className="w-2 h-2 bg-success rounded-full animate-pulse" />
+            <span className="text-[10px] text-success flex items-center gap-1 bg-success/15 px-2 py-0.5 rounded font-medium">
+              <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
               RUNNING
             </span>
           )}
           
           {isEditing && (
-            <span className="text-xs text-warning bg-warning/20 px-2 py-1 rounded-full font-medium">
+            <span className="text-[10px] text-warning bg-warning/15 px-2 py-0.5 rounded font-medium">
               MODIFIED
             </span>
           )}
           
           <button
             onClick={handleReset}
-            className="p-1.5 rounded-md hover:bg-secondary/50 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
             title="Reset to auto-generated code"
           >
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="w-3.5 h-3.5" />
           </button>
           
           <button
             onClick={handleCopy}
-            className="p-1.5 rounded-md hover:bg-secondary/50 text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
             title="Copy code"
           >
-            {copied ? <Check className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4" />}
+            {copied ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
         </div>
       </div>
@@ -189,10 +189,10 @@ export function CodePanel({ components, isRunning }: CodePanelProps) {
       {/* Code Editor */}
       <div className="flex-1 relative overflow-hidden">
         {/* Line numbers */}
-        <div className="absolute left-0 top-0 bottom-0 w-12 bg-[hsl(220,30%,5%)] border-r border-border/20 overflow-hidden pointer-events-none">
-          <div className="p-4 font-mono text-sm leading-relaxed text-muted-foreground/50">
+        <div className="absolute left-0 top-0 bottom-0 w-10 bg-muted/20 border-r border-border/15 overflow-hidden pointer-events-none">
+          <div className="p-3 font-mono text-xs leading-relaxed text-muted-foreground/40">
             {code.split('\n').map((_, i) => (
-              <div key={i} className="text-right pr-2">{i + 1}</div>
+              <div key={i} className="text-right pr-1.5">{i + 1}</div>
             ))}
           </div>
         </div>
@@ -201,19 +201,18 @@ export function CodePanel({ components, isRunning }: CodePanelProps) {
         <textarea
           value={code}
           onChange={handleCodeChange}
-          className="code-editor pl-16 w-full h-full"
+          className="w-full h-full bg-transparent text-code-text font-mono text-xs resize-none outline-none p-3 pl-14 leading-relaxed"
           spellCheck={false}
           placeholder="Write your Arduino code here..."
         />
       </div>
       
       {/* Footer */}
-      <div className="px-4 py-2 bg-[hsl(220,30%,6%)] border-t border-border/20 flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">
-          {isEditing ? '✏️ Custom code • ' : '🔄 Auto-generated • '}
-          Click to edit
+      <div className="px-3 py-1.5 bg-muted/20 border-t border-border/15 flex items-center justify-between">
+        <p className="text-[10px] text-muted-foreground">
+          {isEditing ? '✏️ Custom' : '🔄 Auto-generated'}
         </p>
-        <p className="text-xs text-muted-foreground font-mono">
+        <p className="text-[10px] text-muted-foreground font-mono">
           {code.split('\n').length} lines
         </p>
       </div>
