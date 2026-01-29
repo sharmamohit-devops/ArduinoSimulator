@@ -1,73 +1,130 @@
-# Welcome to your Lovable project
+# Web-Based Arduino Simulator ⚡
 
-## Project info
+A browser-based Arduino simulator developed as part of my **application and work for the FOSSEE Semester-Long Internship** under the **Open Source Hardware (OSHW) project**, IIT Bombay.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+The simulator allows users to visually build simple Arduino circuits, automatically manage pin connections, generate Arduino C/C++ code, and observe logic-level simulation — all without physical hardware.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🚀 What is this project?
 
-**Use Lovable**
+This project is built to make **learning embedded systems more intuitive and accessible**.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Instead of starting with physical wiring, hardware availability, and debugging issues, users can focus on understanding:
+- how Arduino pins are assigned,
+- how circuit connections translate into embedded code,
+- and how digital input-output logic behaves in real time.
 
-Changes made via Lovable will be committed automatically to this repo.
+The simulator acts as a **visual and logical bridge** between circuit design and Arduino programming.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🌐 Live Simulator
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Access the deployed simulator here:
 
-Follow these steps:
+👉 **https://mohit-fossee.vercel.app/**
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+The simulator runs entirely in the browser and does not require any installation or hardware setup.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+## ✨ Key Features
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+- 🧩 Drag-and-drop interface for circuit construction  
+- 🔌 Visual Arduino Uno with realistic-looking components  
+- 🔄 Automatic digital pin assignment  
+- 🚫 Conflict-free pin reassignment  
+- 🧠 Auto-generated Arduino C/C++ code  
+- 💡 Logic-level simulation (Button → LED behavior)  
+- ⚙️ Real-time visual feedback during simulation  
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🏗️ System Architecture Overview
 
-**Use GitHub Codespaces**
+The simulator follows a **modular and layered architecture**, consisting of:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- **User Interface Layer**  
+  Manages component visuals, drag-and-drop actions, pin selection, and simulation controls.
 
-## What technologies are used for this project?
+- **State Management Layer**  
+  Maintains a centralized system state including components, pin assignments, and logic values.
 
-This project is built with:
+- **Code Generation Module**  
+  Dynamically generates valid Arduino C/C++ code based on the current circuit configuration.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **Logic-Level Simulation Engine**  
+  Simulates digital input-output behavior using HIGH / LOW logic abstraction.
 
-## How can I deploy this project?
+This architecture ensures clarity, maintainability, and scope for future extension.
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## 🔧 Supported Components
 
-Yes, you can!
+Currently supported components include:
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- Arduino Uno  
+- LED  
+- Push Button  
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+> The simulator focuses on digital logic learning and does not model analog or timing-level behavior.
+
+---
+
+## 🧪 How It Works
+
+1. Place the Arduino and components on the workspace  
+2. Digital pins are assigned automatically  
+3. Reassign pins if required (conflict-free)  
+4. Arduino C/C++ code is generated dynamically  
+5. Run the simulation and interact with the circuit  
+
+Each step helps users understand how **hardware configuration affects embedded software behavior**.
+
+---
+
+## ⚠️ Current Limitations
+
+- Logic-level simulation only  
+- Limited component library  
+- No project saving or direct code export  
+- No analog or timing-accurate simulation  
+
+These limitations are intentional to keep the simulator simple and beginner-friendly.
+
+---
+
+## 🔮 Future Improvements
+
+- Support for additional sensors and actuators  
+- Serial monitor simulation  
+- PWM and timing-based behavior  
+- Project saving and sharing features  
+- Expanded educational components  
+
+---
+
+## 🎯 Purpose
+
+This simulator is intended for **educational and demonstration purposes**, particularly for:
+- students learning Arduino and embedded systems,
+- beginners exploring digital I/O concepts,
+- classroom and self-learning environments.
+
+---
+
+## 🙏 Acknowledgements
+
+This project was **designed and developed by me as part of my application and work for the FOSSEE Semester-Long Internship** under the **Open Source Hardware (OSHW) project**, IIT Bombay. The simulator was built to demonstrate my understanding of embedded systems concepts, system architecture, and the design of educational simulation tools.
+
+I would like to thank the **FOSSEE team, IIT Bombay**, for providing an opportunity to apply under the OSHW initiative, which motivated the development of this project. The internship problem statement helped shape the scope and objectives of the simulator.
+
+I am also grateful to my faculty members and peers for their feedback and discussions, which contributed to improving the clarity, usability, and overall quality of the project.
+
+---
+
+
+
+
