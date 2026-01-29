@@ -8,6 +8,17 @@ export type DigitalPin = typeof AVAILABLE_PINS[number];
 export const DEFAULT_LED_PIN: DigitalPin = 10;
 export const DEFAULT_BUTTON_PIN: DigitalPin = 2;
 
+// LED color options
+export type LEDColor = 'red' | 'green' | 'blue' | 'yellow' | 'white';
+
+export const LED_COLORS: Record<LEDColor, { hex: string; glow: string; label: string }> = {
+  red: { hex: '#FF3333', glow: '#FF0000', label: 'Red' },
+  green: { hex: '#33FF66', glow: '#00FF00', label: 'Green' },
+  blue: { hex: '#3388FF', glow: '#0066FF', label: 'Blue' },
+  yellow: { hex: '#FFDD33', glow: '#FFCC00', label: 'Yellow' },
+  white: { hex: '#FFFFFF', glow: '#EEEEFF', label: 'White' },
+};
+
 export interface ComponentDefinition {
   id: ComponentType;
   name: string;
@@ -21,6 +32,7 @@ export interface PlacedComponent {
   x: number;
   y: number;
   pin?: DigitalPin;
+  ledColor?: LEDColor;
   // Runtime state during simulation
   state?: {
     isOn?: boolean;      // For LED

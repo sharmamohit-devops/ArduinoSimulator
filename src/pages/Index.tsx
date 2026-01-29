@@ -13,6 +13,7 @@ const Index = () => {
     moveComponent,
     removeComponent,
     changeComponentPin,
+    changeLEDColor,
     handleButtonPress,
     startSimulation,
     stopSimulation,
@@ -62,6 +63,7 @@ const Index = () => {
               onMoveComponent={moveComponent}
               onRemoveComponent={removeComponent}
               onChangePin={changeComponentPin}
+              onChangeLEDColor={changeLEDColor}
               onButtonPress={handleButtonPress}
             />
           ) : (
@@ -78,6 +80,7 @@ const Index = () => {
                   onMoveComponent={moveComponent}
                   onRemoveComponent={removeComponent}
                   onChangePin={changeComponentPin}
+                  onChangeLEDColor={changeLEDColor}
                   onButtonPress={handleButtonPress}
                 />
               </div>
