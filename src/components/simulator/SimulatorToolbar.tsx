@@ -32,7 +32,7 @@ export function SimulatorToolbar({
         <div>
           <h1 className="text-lg font-bold text-foreground font-display tracking-wide flex items-center gap-2">
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Arduino
+              Ms
             </span>
             <span>Simulator</span>
           </h1>
