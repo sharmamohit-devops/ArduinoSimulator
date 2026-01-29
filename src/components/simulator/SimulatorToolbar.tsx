@@ -1,4 +1,4 @@
-import { Play, Square, LayoutGrid, Code, Trash2 } from 'lucide-react';
+import { Play, Square, LayoutGrid, Code, Trash2, CircuitBoard } from 'lucide-react';
 
 interface SimulatorToolbarProps {
   viewMode: 'component' | 'code';
@@ -20,19 +20,15 @@ export function SimulatorToolbar({
   onClear,
 }: SimulatorToolbarProps) {
   return (
-    <header className="h-14 bg-toolbar border-b border-border flex items-center justify-between px-4 shadow-panel">
+    <header className="h-16 bg-toolbar border-b border-border flex items-center justify-between px-6 shadow-panel">
       {/* Left: Logo and title */}
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-          <svg className="w-5 h-5 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 2L2 7l10 5 10-5-10-5z" />
-            <path d="M2 17l10 5 10-5" />
-            <path d="M2 12l10 5 10-5" />
-          </svg>
+        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-sm">
+          <CircuitBoard className="w-6 h-6 text-primary-foreground" />
         </div>
         <div>
-          <h1 className="text-sm font-semibold text-foreground">Arduino Simulator</h1>
-          <p className="text-xs text-muted-foreground">FOSSEE OSHW Task 1</p>
+          <h1 className="text-base font-bold text-foreground">Arduino Simulator</h1>
+          <p className="text-xs text-muted-foreground">FOSSEE OSHW Internship — Task 2 &amp; 3</p>
         </div>
       </div>
 
@@ -40,31 +36,31 @@ export function SimulatorToolbar({
       <div className="flex items-center gap-1 bg-secondary rounded-lg p-1">
         <button
           onClick={() => onViewModeChange('component')}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
             viewMode === 'component'
               ? 'bg-primary text-primary-foreground shadow-sm'
-              : 'text-secondary-foreground hover:bg-secondary/80'
+              : 'text-secondary-foreground hover:bg-muted'
           }`}
         >
           <LayoutGrid className="w-4 h-4" />
-          Component View
+          Circuit
         </button>
         <button
           onClick={() => onViewModeChange('code')}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
             viewMode === 'code'
               ? 'bg-primary text-primary-foreground shadow-sm'
-              : 'text-secondary-foreground hover:bg-secondary/80'
+              : 'text-secondary-foreground hover:bg-muted'
           }`}
         >
           <Code className="w-4 h-4" />
-          Code View
+          Code
         </button>
       </div>
 
       {/* Right: Simulation controls */}
-      <div className="flex items-center gap-2">
-        {hasComponents && (
+      <div className="flex items-center gap-3">
+        {hasComponents && !isRunning && (
           <button
             onClick={onClear}
             className="flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium 
@@ -76,24 +72,24 @@ export function SimulatorToolbar({
           </button>
         )}
         
-        <div className="w-px h-6 bg-border mx-1" />
+        <div className="w-px h-8 bg-border" />
         
         {!isRunning ? (
           <button
             onClick={onStart}
             disabled={!hasComponents}
-            className="sim-btn-start flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="sim-btn-start flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Play className="w-4 h-4" />
-            Start
+            Start Simulation
           </button>
         ) : (
           <button
             onClick={onStop}
-            className="sim-btn-stop flex items-center gap-2"
+            className="sim-btn-stop flex items-center gap-2 animate-pulse"
           >
             <Square className="w-4 h-4" />
-            Stop
+            Stop Simulation
           </button>
         )}
       </div>
