@@ -48,19 +48,19 @@ const getDefaultPin = (type: ComponentType): string | null => {
 const getComponentColor = (type: ComponentType): string => {
   switch (type) {
     case 'arduino-uno':
-      return 'from-blue-500/20 to-cyan-500/20';
+      return 'from-primary/15 to-primary/5';
     case 'led':
-      return 'from-red-500/20 to-orange-500/20';
+      return 'from-red-500/15 to-red-500/5';
     case 'push-button':
-      return 'from-purple-500/20 to-pink-500/20';
+      return 'from-violet-500/15 to-violet-500/5';
     case 'resistor':
-      return 'from-amber-500/20 to-yellow-500/20';
+      return 'from-amber-500/15 to-amber-500/5';
     case 'buzzer':
-      return 'from-violet-500/20 to-purple-500/20';
+      return 'from-purple-500/15 to-purple-500/5';
     case 'potentiometer':
-      return 'from-emerald-500/20 to-teal-500/20';
+      return 'from-emerald-500/15 to-emerald-500/5';
     default:
-      return 'from-gray-500/20 to-gray-600/20';
+      return 'from-muted/15 to-muted/5';
   }
 };
 
@@ -112,20 +112,18 @@ export function ComponentPalette({ onDragStart }: ComponentPaletteProps) {
   const categoryOrder = ['board', 'output', 'input', 'passive'];
 
   return (
-    <aside className="w-80 bg-gradient-to-b from-sidebar to-[hsl(220,25%,8%)] border-r border-border flex flex-col h-full">
+    <aside className="w-72 bg-sidebar border-r border-border flex flex-col h-full">
       {/* Header */}
-      <div className="p-5 border-b border-border bg-gradient-to-r from-primary/5 to-transparent">
-        <h2 className="text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
-          <Zap className="w-4 h-4 text-primary" />
-          <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Component Library
-          </span>
+      <div className="px-4 py-3 border-b border-border">
+        <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider flex items-center gap-2">
+          <Zap className="w-3.5 h-3.5 text-primary" />
+          Component Library
         </h2>
-        <p className="text-xs text-muted-foreground mt-1">Drag components to the canvas</p>
+        <p className="text-[10px] text-muted-foreground mt-0.5">Drag to canvas</p>
       </div>
       
       {/* Component List by Category */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-5">
+      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
         {categoryOrder.map((category) => {
           const components = groupedComponents[category];
           if (!components) return null;
@@ -133,13 +131,13 @@ export function ComponentPalette({ onDragStart }: ComponentPaletteProps) {
           return (
             <div key={category}>
               {/* Category Header */}
-              <div className="flex items-center gap-2 mb-3 text-xs text-muted-foreground uppercase tracking-wider">
+              <div className="flex items-center gap-1.5 mb-2 text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
                 {getCategoryIcon(category)}
                 <span>{getCategoryLabel(category)}</span>
               </div>
               
               {/* Components */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {components.map((component) => {
                   const defaultPin = getDefaultPin(component.id);
                   const colorClass = getComponentColor(component.id);
@@ -149,35 +147,35 @@ export function ComponentPalette({ onDragStart }: ComponentPaletteProps) {
                       key={component.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, component.id)}
-                      className="component-card group relative"
+                      className="component-card group relative py-3"
                     >
                       {/* Gradient overlay */}
-                      <div className={`absolute inset-0 bg-gradient-to-br ${colorClass} rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                      <div className={`absolute inset-0 bg-gradient-to-br ${colorClass} rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200`} />
                       
-                      <div className="relative flex items-center gap-4">
+                      <div className="relative flex items-center gap-3">
                         {/* Icon container */}
-                        <div className="flex-shrink-0 p-2 bg-gradient-to-br from-muted to-muted/50 rounded-lg group-hover:from-primary/20 group-hover:to-primary/5 transition-all duration-300 flex items-center justify-center min-w-[70px] min-h-[50px]">
+                        <div className="flex-shrink-0 p-1.5 bg-muted/50 rounded-md group-hover:bg-primary/10 transition-all duration-200 flex items-center justify-center min-w-[56px] min-h-[40px]">
                           {getComponentIcon(component.id)}
                         </div>
                         
                         {/* Info */}
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
+                          <h3 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
                             {component.name}
                           </h3>
-                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                          <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-1">
                             {component.description}
                           </p>
                           {defaultPin && (
-                            <p className="text-[10px] font-mono mt-1.5 inline-flex items-center gap-1 bg-primary/10 text-primary px-1.5 py-0.5 rounded">
-                              Pin: {defaultPin}
+                            <p className="text-[9px] font-mono mt-1 inline-flex items-center gap-0.5 bg-primary/10 text-primary/80 px-1.5 py-0.5 rounded">
+                              {defaultPin}
                             </p>
                           )}
                         </div>
                         
                         {/* Drag indicator */}
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                          <GripVertical className="w-4 h-4 text-muted-foreground" />
+                          <GripVertical className="w-3.5 h-3.5 text-muted-foreground/60" />
                         </div>
                       </div>
                     </div>
@@ -190,21 +188,20 @@ export function ComponentPalette({ onDragStart }: ComponentPaletteProps) {
       </div>
       
       {/* Quick Start Guide */}
-      <div className="p-4 border-t border-border bg-gradient-to-t from-muted/20 to-transparent">
-        <div className="bg-card/50 rounded-xl p-3 border border-border/50">
-          <p className="text-xs font-semibold text-foreground mb-2 flex items-center gap-2">
-            <span className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-primary text-[10px] font-bold">?</span>
+      <div className="px-3 py-3 border-t border-border">
+        <div className="bg-muted/30 rounded-lg p-2.5">
+          <p className="text-[10px] font-medium text-foreground/80 mb-1.5 flex items-center gap-1.5">
+            <span className="w-3.5 h-3.5 rounded-full bg-primary/15 flex items-center justify-center text-primary text-[8px] font-bold">?</span>
             Quick Start
           </p>
-          <ol className="text-[11px] text-muted-foreground space-y-1.5">
+          <ol className="text-[10px] text-muted-foreground space-y-1">
             {[
-              'Add Arduino Uno first',
-              'Add LED, Button, Resistor',
-              'Components auto-wire',
-              'Click START to simulate',
+              'Add Arduino first',
+              'Add LED & Button',
+              'Click Start',
             ].map((step, i) => (
-              <li key={i} className="flex items-center gap-2">
-                <span className="w-3.5 h-3.5 rounded-full bg-primary/20 flex items-center justify-center text-primary text-[9px] font-bold flex-shrink-0">
+              <li key={i} className="flex items-center gap-1.5">
+                <span className="w-3 h-3 rounded-full bg-primary/15 flex items-center justify-center text-primary text-[8px] font-medium flex-shrink-0">
                   {i + 1}
                 </span>
                 {step}

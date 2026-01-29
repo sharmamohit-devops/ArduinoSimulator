@@ -2,81 +2,81 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-/* Arduino Simulator Design System - Professional Engineering Aesthetic */
+/* Ms Simulator - Professional Engineering Design System */
 
 @layer base {
   :root {
-    --background: 220 25% 8%;
-    --foreground: 210 20% 95%;
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
 
-    --card: 220 25% 12%;
-    --card-foreground: 210 20% 95%;
+    --card: 222 47% 9%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 220 25% 14%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 180 100% 45%;
-    --primary-foreground: 220 25% 8%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 6%;
 
-    --secondary: 220 20% 18%;
-    --secondary-foreground: 210 20% 90%;
+    --secondary: 215 28% 17%;
+    --secondary-foreground: 210 40% 90%;
 
-    --muted: 220 20% 16%;
-    --muted-foreground: 210 15% 55%;
+    --muted: 217 33% 14%;
+    --muted-foreground: 215 20% 55%;
 
-    --accent: 280 80% 60%;
+    --accent: 262 83% 58%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 85% 55%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 145 80% 45%;
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 45 100% 55%;
-    --warning-foreground: 220 25% 8%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 47% 6%;
 
-    --border: 220 20% 20%;
-    --input: 220 20% 16%;
-    --ring: 180 100% 45%;
+    --border: 217 33% 18%;
+    --input: 217 33% 14%;
+    --ring: 217 91% 60%;
 
-    --radius: 0.75rem;
+    --radius: 0.625rem;
 
     /* Simulator-specific tokens */
-    --canvas-bg: 220 25% 6%;
-    --canvas-grid: 220 20% 12%;
-    --panel-bg: 220 25% 10%;
-    --toolbar-bg: 220 25% 10%;
-    --component-bg: 220 25% 14%;
-    --component-border: 220 20% 22%;
-    --component-hover: 180 100% 20%;
+    --canvas-bg: 222 47% 5%;
+    --canvas-grid: 217 33% 12%;
+    --panel-bg: 222 47% 8%;
+    --toolbar-bg: 222 47% 7%;
+    --component-bg: 222 47% 11%;
+    --component-border: 217 33% 20%;
+    --component-hover: 217 91% 25%;
     
-    /* Code editor colors */
-    --code-bg: 220 30% 6%;
-    --code-text: 210 20% 85%;
-    --code-keyword: 280 90% 70%;
-    --code-function: 180 100% 55%;
-    --code-string: 45 100% 60%;
-    --code-comment: 210 15% 45%;
-    --code-number: 35 100% 65%;
-    --code-type: 200 100% 65%;
+    /* Code editor colors - VS Code inspired */
+    --code-bg: 222 47% 4%;
+    --code-text: 210 40% 88%;
+    --code-keyword: 291 47% 60%;
+    --code-function: 207 82% 66%;
+    --code-string: 29 80% 60%;
+    --code-comment: 215 20% 45%;
+    --code-number: 32 93% 58%;
+    --code-type: 187 80% 55%;
 
     /* LED colors */
     --led-red: 0 100% 50%;
-    --led-green: 120 100% 45%;
-    --led-blue: 210 100% 55%;
-    --led-yellow: 50 100% 50%;
+    --led-green: 142 100% 45%;
+    --led-blue: 217 100% 60%;
+    --led-yellow: 45 100% 50%;
 
-    --sidebar-background: 220 25% 10%;
-    --sidebar-foreground: 210 20% 90%;
-    --sidebar-primary: 180 100% 45%;
-    --sidebar-primary-foreground: 220 25% 8%;
-    --sidebar-accent: 180 100% 15%;
-    --sidebar-accent-foreground: 180 100% 70%;
-    --sidebar-border: 220 20% 18%;
-    --sidebar-ring: 180 100% 45%;
+    --sidebar-background: 222 47% 7%;
+    --sidebar-foreground: 210 40% 92%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 217 91% 15%;
+    --sidebar-accent-foreground: 217 91% 75%;
+    --sidebar-border: 217 33% 16%;
+    --sidebar-ring: 217 91% 60%;
   }
 }
 
@@ -95,7 +95,8 @@
   }
 
   .font-display {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 0.02em;
   }
 }
 
@@ -104,10 +105,10 @@
   .canvas-workspace {
     background-color: hsl(var(--canvas-bg));
     background-image: 
-      linear-gradient(hsl(var(--canvas-grid) / 0.5) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--canvas-grid) / 0.5) 1px, transparent 1px),
-      linear-gradient(hsl(var(--canvas-grid) / 0.25) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--canvas-grid) / 0.25) 1px, transparent 1px);
+      linear-gradient(hsl(var(--canvas-grid) / 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--canvas-grid) / 0.4) 1px, transparent 1px),
+      linear-gradient(hsl(var(--canvas-grid) / 0.15) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--canvas-grid) / 0.15) 1px, transparent 1px);
     background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
     background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
   }
@@ -122,9 +123,9 @@
 
   /* Enhanced component cards */
   .component-card {
-    @apply bg-component border border-component-border rounded-xl p-4 cursor-grab 
-           transition-all duration-300 hover:border-primary/50 relative overflow-hidden;
-    background: linear-gradient(135deg, hsl(var(--component-bg)) 0%, hsl(220 25% 12%) 100%);
+    @apply bg-component border border-component-border rounded-lg p-4 cursor-grab 
+           transition-all duration-200 hover:border-primary/40 relative overflow-hidden;
+    background: linear-gradient(145deg, hsl(var(--component-bg)) 0%, hsl(222 47% 8%) 100%);
   }
 
   .component-card::before {
@@ -134,18 +135,19 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.3), transparent);
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.2), transparent);
   }
 
   .component-card:hover {
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.15), 
-                0 8px 32px hsl(220 25% 0% / 0.4);
-    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.2),
+                0 8px 24px hsl(222 47% 0% / 0.5);
+    transform: translateY(-1px);
   }
 
   .component-card:active {
-    @apply cursor-grabbing scale-[1.02];
-    box-shadow: 0 0 30px hsl(var(--primary) / 0.25);
+    @apply cursor-grabbing;
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.3),
+                0 12px 32px hsl(222 47% 0% / 0.6);
   }
 
   /* Toolbar styling */
@@ -155,47 +157,43 @@
   }
 
   .toolbar-btn-active {
-    @apply bg-primary text-primary-foreground shadow-lg;
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.4);
+    @apply bg-primary text-primary-foreground;
+    box-shadow: 0 0 16px hsl(var(--primary) / 0.3);
   }
 
   /* Simulation buttons */
   .sim-btn-start {
-    @apply px-6 py-3 rounded-xl font-bold text-sm transition-all duration-300
-           bg-success text-success-foreground uppercase tracking-wider;
-    background: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(145 80% 35%) 100%);
-    box-shadow: 0 4px 20px hsl(var(--success) / 0.4),
-                inset 0 1px 0 hsl(145 80% 60% / 0.3);
+    @apply px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200
+           bg-success text-success-foreground tracking-wide;
+    background: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(142 71% 38%) 100%);
+    box-shadow: 0 2px 12px hsl(var(--success) / 0.35);
   }
 
   .sim-btn-start:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 30px hsl(var(--success) / 0.5),
-                inset 0 1px 0 hsl(145 80% 60% / 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px hsl(var(--success) / 0.45);
   }
 
   .sim-btn-start:disabled {
-    opacity: 0.4;
+    opacity: 0.35;
     cursor: not-allowed;
   }
 
   .sim-btn-stop {
-    @apply px-6 py-3 rounded-xl font-bold text-sm transition-all duration-300
-           bg-destructive text-destructive-foreground uppercase tracking-wider;
-    background: linear-gradient(135deg, hsl(var(--destructive)) 0%, hsl(0 85% 40%) 100%);
-    box-shadow: 0 4px 20px hsl(var(--destructive) / 0.4),
-                inset 0 1px 0 hsl(0 85% 70% / 0.3);
-    animation: pulse-glow 2s ease-in-out infinite;
+    @apply px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200
+           bg-destructive text-destructive-foreground tracking-wide;
+    background: linear-gradient(135deg, hsl(var(--destructive)) 0%, hsl(0 72% 42%) 100%);
+    box-shadow: 0 2px 12px hsl(var(--destructive) / 0.35);
   }
 
   .sim-btn-stop:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 30px hsl(var(--destructive) / 0.5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px hsl(var(--destructive) / 0.45);
   }
 
   @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 4px 20px hsl(var(--destructive) / 0.4); }
-    50% { box-shadow: 0 4px 30px hsl(var(--destructive) / 0.6); }
+    0%, 100% { box-shadow: 0 2px 12px hsl(var(--destructive) / 0.35); }
+    50% { box-shadow: 0 2px 16px hsl(var(--destructive) / 0.5); }
   }
 
   /* Code panel styling */
