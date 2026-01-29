@@ -5,6 +5,7 @@ import {
   SimulatorState,
   Wire,
   DigitalPin,
+  LEDColor,
   DEFAULT_LED_PIN,
   DEFAULT_BUTTON_PIN,
   getNextAvailablePin,
@@ -55,6 +56,7 @@ export function useSimulator() {
         x,
         y,
         pin,
+        ledColor: type === 'led' ? 'red' : undefined,
         state: type === 'led' ? { isOn: false } : type === 'push-button' ? { isPressed: false } : undefined,
       };
 
@@ -150,6 +152,18 @@ export function useSimulator() {
         usedPins: newUsedPins,
       };
     });
+  }, []);
+
+  // Change LED color
+  const changeLEDColor = useCallback((instanceId: string, color: LEDColor) => {
+    setState((prev) => ({
+      ...prev,
+      components: prev.components.map((comp) =>
+        comp.instanceId === instanceId && comp.type === 'led'
+          ? { ...comp, ledColor: color }
+          : comp
+      ),
+    }));
   }, []);
 
   // Set component runtime state (for simulation)
@@ -258,6 +272,7 @@ export function useSimulator() {
     moveComponent,
     removeComponent,
     changeComponentPin,
+    changeLEDColor,
     setComponentState,
     handleButtonPress,
     startSimulation,

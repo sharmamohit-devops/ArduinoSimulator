@@ -1,232 +1,231 @@
+import { LEDColor, LED_COLORS } from '@/types/simulator';
+
 interface LEDIconProps {
   className?: string;
   size?: number;
-  color?: string;
+  color?: LEDColor;
   isOn?: boolean;
 }
 
 export function LEDIcon({ 
   className = '', 
   size = 56, 
-  color = '#EF4444',
+  color = 'red',
   isOn = false 
 }: LEDIconProps) {
-  // Calculate colors based on base color
-  const glowIntensity = isOn ? 1 : 0;
+  const colorData = LED_COLORS[color];
+  const baseColor = colorData.hex;
+  const glowColor = colorData.glow;
+  const uniqueId = `led-${color}-${isOn}`;
   
   return (
     <svg
       width={size}
-      height={size * 1.5}
-      viewBox="0 0 56 84"
-      className={`${className} transition-all duration-150`}
+      height={size * 1.4}
+      viewBox="0 0 60 84"
+      className={`${className} transition-all duration-100`}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
-        {/* Glow gradient for when LED is on */}
-        <radialGradient id={`ledGlow-${isOn}`} cx="50%" cy="35%" r="60%" fx="40%" fy="30%">
-          <stop offset="0%" stopColor={color} stopOpacity={isOn ? 1 : 0.3} />
-          <stop offset="40%" stopColor={color} stopOpacity={isOn ? 0.8 : 0.2} />
-          <stop offset="100%" stopColor={color} stopOpacity={isOn ? 0.3 : 0.05} />
+        {/* Main LED body gradient - realistic diffused plastic look */}
+        <radialGradient id={`ledBody-${uniqueId}`} cx="50%" cy="40%" r="50%" fx="35%" fy="30%">
+          <stop offset="0%" stopColor={isOn ? baseColor : '#444444'} stopOpacity={isOn ? 0.95 : 0.4} />
+          <stop offset="60%" stopColor={isOn ? baseColor : '#333333'} stopOpacity={isOn ? 0.7 : 0.3} />
+          <stop offset="100%" stopColor={isOn ? glowColor : '#222222'} stopOpacity={isOn ? 0.4 : 0.2} />
         </radialGradient>
-        
-        {/* Lens highlight */}
-        <radialGradient id="lensHighlight" cx="30%" cy="20%" r="50%">
-          <stop offset="0%" stopColor="white" stopOpacity="0.8" />
-          <stop offset="100%" stopColor="white" stopOpacity="0" />
+
+        {/* Clear epoxy lens gradient */}
+        <linearGradient id={`lensGradient-${uniqueId}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.25" />
+          <stop offset="50%" stopColor="#ffffff" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0.15" />
+        </linearGradient>
+
+        {/* Inner die (light source) */}
+        <radialGradient id={`diode-${uniqueId}`} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor={isOn ? '#ffffff' : '#555555'} stopOpacity={isOn ? 1 : 0.3} />
+          <stop offset="40%" stopColor={isOn ? baseColor : '#444444'} stopOpacity={isOn ? 1 : 0.4} />
+          <stop offset="100%" stopColor={isOn ? glowColor : '#333333'} stopOpacity={isOn ? 0.8 : 0.2} />
         </radialGradient>
-        
-        {/* Shadow filter */}
-        <filter id="ledShadow" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.4" />
-        </filter>
-        
-        {/* Intense glow for ON state */}
-        <filter id="intensGlow" x="-100%" y="-100%" width="300%" height="300%">
-          <feGaussianBlur stdDeviation="8" result="blur" />
-          <feFlood floodColor={color} floodOpacity="0.8" result="color" />
-          <feComposite in="color" in2="blur" operator="in" result="glow" />
+
+        {/* Intense outer glow for ON state */}
+        <filter id={`outerGlow-${uniqueId}`} x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur stdDeviation="6" result="blur1" />
+          <feGaussianBlur stdDeviation="12" result="blur2" />
           <feMerge>
-            <feMergeNode in="glow" />
-            <feMergeNode in="glow" />
+            <feMergeNode in="blur2" />
+            <feMergeNode in="blur1" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+
+        {/* Metal lead gradient */}
+        <linearGradient id="metalLead" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#A8A8A8" />
+          <stop offset="30%" stopColor="#D0D0D0" />
+          <stop offset="50%" stopColor="#E8E8E8" />
+          <stop offset="70%" stopColor="#D0D0D0" />
+          <stop offset="100%" stopColor="#A8A8A8" />
+        </linearGradient>
       </defs>
       
-      {/* Outer glow when on */}
+      {/* Outer glow halo when ON */}
       {isOn && (
-        <ellipse
-          cx="28"
-          cy="28"
-          rx="30"
-          ry="32"
-          fill={color}
-          opacity="0.25"
-          style={{
-            animation: 'pulse 1s ease-in-out infinite',
-          }}
-        />
+        <>
+          <ellipse
+            cx="30"
+            cy="28"
+            rx="28"
+            ry="30"
+            fill={glowColor}
+            opacity="0.15"
+          />
+          <ellipse
+            cx="30"
+            cy="28"
+            rx="22"
+            ry="24"
+            fill={glowColor}
+            opacity="0.25"
+          />
+        </>
       )}
       
-      {/* LED dome/lens - 5mm style */}
-      <g filter={isOn ? "url(#intensGlow)" : "url(#ledShadow)"}>
-        {/* Main LED body */}
-        <ellipse
-          cx="28"
-          cy="26"
-          rx="16"
-          ry="24"
-          fill={`url(#ledGlow-${isOn})`}
-          stroke={color}
+      {/* LED Dome - 5mm T-1 3/4 package shape */}
+      <g filter={isOn ? `url(#outerGlow-${uniqueId})` : undefined}>
+        {/* Main epoxy dome body */}
+        <path
+          d="M14 44 C14 44 14 26 14 22 C14 10 22 4 30 4 C38 4 46 10 46 22 C46 26 46 44 46 44 L14 44 Z"
+          fill={`url(#ledBody-${uniqueId})`}
+          stroke={isOn ? glowColor : '#555555'}
           strokeWidth="0.5"
-          strokeOpacity="0.3"
-          style={{
-            transition: 'all 0.15s ease',
-          }}
+          strokeOpacity={isOn ? 0.6 : 0.3}
         />
         
-        {/* Inner core - brighter when on */}
+        {/* Clear lens overlay for depth */}
+        <path
+          d="M16 42 C16 42 16 26 16 22 C16 12 23 6 30 6 C37 6 44 12 44 22 C44 26 44 42 44 42 L16 42 Z"
+          fill={`url(#lensGradient-${uniqueId})`}
+        />
+
+        {/* Internal die/chip (the actual light source) */}
         <ellipse
-          cx="28"
-          cy="24"
+          cx="30"
+          cy="26"
+          rx="8"
+          ry="10"
+          fill={`url(#diode-${uniqueId})`}
+        />
+
+        {/* Reflector cup behind die */}
+        <ellipse
+          cx="30"
+          cy="30"
           rx="10"
-          ry="16"
-          fill={color}
-          opacity={isOn ? 0.9 : 0.3}
-          style={{
-            transition: 'opacity 0.15s ease',
-          }}
+          ry="6"
+          fill={isOn ? baseColor : '#3a3a3a'}
+          opacity={isOn ? 0.5 : 0.2}
         />
-        
-        {/* Top highlight reflection */}
+
+        {/* Top specular highlight */}
         <ellipse
-          cx="23"
-          cy="16"
+          cx="24"
+          cy="14"
           rx="6"
-          ry="8"
-          fill="url(#lensHighlight)"
-          opacity={isOn ? 0.9 : 0.5}
+          ry="5"
+          fill="white"
+          opacity={isOn ? 0.6 : 0.25}
         />
-        
+
         {/* Secondary highlight */}
         <ellipse
-          cx="33"
-          cy="32"
+          cx="34"
+          cy="18"
           rx="3"
-          ry="4"
+          ry="2.5"
           fill="white"
-          opacity={isOn ? 0.4 : 0.2}
+          opacity={isOn ? 0.4 : 0.15}
         />
       </g>
-      
-      {/* LED base/flange - realistic plastic rim */}
+
+      {/* LED Flange/Base - the rim at the bottom */}
       <g>
+        {/* Main flange body */}
         <rect
           x="12"
-          y="48"
-          width="32"
-          height="8"
-          rx="1.5"
-          fill="#B0B0B0"
-          stroke="#909090"
-          strokeWidth="0.5"
+          y="44"
+          width="36"
+          height="6"
+          rx="1"
+          fill="#888888"
         />
-        {/* Flange highlight */}
+        {/* Flange top highlight */}
         <rect
           x="12"
-          y="48"
-          width="32"
-          height="3"
-          rx="1.5"
-          fill="#D0D0D0"
-          opacity="0.6"
+          y="44"
+          width="36"
+          height="2"
+          rx="1"
+          fill="#AAAAAA"
         />
-        {/* Flat edge indicator (cathode marker) */}
+        {/* Flat edge indicator (cathode side) */}
         <rect
           x="12"
-          y="48"
-          width="5"
-          height="8"
-          fill="#A0A0A0"
+          y="44"
+          width="4"
+          height="6"
+          fill="#777777"
         />
       </g>
-      
-      {/* Cathode leg (short - flat side) */}
+
+      {/* Cathode Lead (shorter, flat side) */}
       <g>
         <rect
-          x="18"
-          y="56"
-          width="2.5"
-          height="28"
-          fill="linear-gradient(180deg, #C0C0C0 0%, #909090 100%)"
+          x="20"
+          y="50"
+          width="2"
+          height="34"
+          fill="url(#metalLead)"
           rx="0.3"
         />
-        <rect x="18" y="56" width="2.5" height="4" fill="#D0D0D0" opacity="0.6" />
         {/* Cathode marker */}
-        <text x="19.25" y="70" fontSize="5" fill="#505050" textAnchor="middle" fontFamily="monospace" fontWeight="bold">−</text>
+        <text 
+          x="21" 
+          y="66" 
+          fontSize="6" 
+          fill="#666666" 
+          textAnchor="middle" 
+          fontFamily="Arial, sans-serif"
+          fontWeight="bold"
+        >
+          −
+        </text>
       </g>
-      
-      {/* Anode leg (long) */}
+
+      {/* Anode Lead (longer) */}
       <g>
         <rect
-          x="35.5"
-          y="56"
-          width="2.5"
-          height="24"
-          fill="linear-gradient(180deg, #C0C0C0 0%, #909090 100%)"
+          x="38"
+          y="50"
+          width="2"
+          height="30"
+          fill="url(#metalLead)"
           rx="0.3"
         />
-        <rect x="35.5" y="56" width="2.5" height="4" fill="#D0D0D0" opacity="0.6" />
         {/* Anode marker */}
-        <text x="36.75" y="70" fontSize="5" fill="#505050" textAnchor="middle" fontFamily="monospace" fontWeight="bold">+</text>
+        <text 
+          x="39" 
+          y="66" 
+          fontSize="6" 
+          fill="#666666" 
+          textAnchor="middle" 
+          fontFamily="Arial, sans-serif"
+          fontWeight="bold"
+        >
+          +
+        </text>
       </g>
-      
-      {/* Status text */}
-      <text 
-        x="28" 
-        y="42" 
-        fontSize="6" 
-        fill={isOn ? "#FFFFFF" : "#666666"} 
-        textAnchor="middle" 
-        fontFamily="monospace"
-        fontWeight="bold"
-        style={{
-          textShadow: isOn ? `0 0 10px ${color}` : 'none',
-          transition: 'all 0.15s ease',
-        }}
-      >
-        {isOn ? 'ON' : 'OFF'}
-      </text>
-      
-      {/* Animated pulse ring when on */}
-      {isOn && (
-        <circle
-          cx="28"
-          cy="26"
-          r="20"
-          fill="none"
-          stroke={color}
-          strokeWidth="2"
-          opacity="0.4"
-          style={{
-            animation: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite',
-          }}
-        />
-      )}
-      
-      <style>
-        {`
-          @keyframes pulse {
-            0%, 100% { opacity: 0.25; transform: scale(1); }
-            50% { opacity: 0.35; transform: scale(1.05); }
-          }
-          @keyframes ping {
-            75%, 100% { transform: scale(1.5); opacity: 0; }
-          }
-        `}
-      </style>
     </svg>
   );
 }
