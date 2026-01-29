@@ -6,8 +6,10 @@ import {
   Wire,
   DigitalPin,
   LEDColor,
+  ResistorValue,
   DEFAULT_LED_PIN,
   DEFAULT_BUTTON_PIN,
+  DEFAULT_BUZZER_PIN,
   getNextAvailablePin,
   WIRE_COLORS,
 } from '@/types/simulator';
@@ -36,11 +38,13 @@ export function useSimulator() {
       let pin: DigitalPin | undefined;
       let wire: Wire | undefined;
       
-      // Assign default pin for LED and Button
+      // Assign default pin for components that need them
       if (type === 'led') {
         pin = getNextAvailablePin(newUsedPins, DEFAULT_LED_PIN) ?? undefined;
       } else if (type === 'push-button') {
         pin = getNextAvailablePin(newUsedPins, DEFAULT_BUTTON_PIN) ?? undefined;
+      } else if (type === 'buzzer') {
+        pin = getNextAvailablePin(newUsedPins, DEFAULT_BUZZER_PIN) ?? undefined;
       }
 
       const instanceId = generateId();
@@ -57,20 +61,31 @@ export function useSimulator() {
         y,
         pin,
         ledColor: type === 'led' ? 'red' : undefined,
-        state: type === 'led' ? { isOn: false } : type === 'push-button' ? { isPressed: false } : undefined,
+        resistorValue: type === 'resistor' ? '220' : undefined,
+        analogPin: type === 'potentiometer' ? 'A0' : undefined,
+        state: type === 'led' || type === 'buzzer' 
+          ? { isOn: false } 
+          : type === 'push-button' 
+          ? { isPressed: false } 
+          : type === 'potentiometer'
+          ? { potValue: 512 }
+          : undefined,
       };
 
       // Create wire if there's an Arduino and this component has a pin
       const arduino = prev.components.find(c => c.type === 'arduino-uno');
       const newWires = [...prev.wires];
       
-      if (arduino && pin !== undefined && type !== 'arduino-uno') {
+      if (arduino && pin !== undefined && type !== 'arduino-uno' && type !== 'resistor' && type !== 'potentiometer') {
+        const wireColor = type === 'led' ? WIRE_COLORS.led 
+          : type === 'buzzer' ? WIRE_COLORS.buzzer 
+          : WIRE_COLORS.button;
         wire = {
           id: generateId(),
           fromComponent: instanceId,
           toComponent: arduino.instanceId,
           fromPin: pin,
-          color: type === 'led' ? WIRE_COLORS.led : WIRE_COLORS.button,
+          color: wireColor,
         };
         newWires.push(wire);
       }
@@ -166,6 +181,18 @@ export function useSimulator() {
     }));
   }, []);
 
+  // Change resistor value
+  const changeResistorValue = useCallback((instanceId: string, value: ResistorValue) => {
+    setState((prev) => ({
+      ...prev,
+      components: prev.components.map((comp) =>
+        comp.instanceId === instanceId && comp.type === 'resistor'
+          ? { ...comp, resistorValue: value }
+          : comp
+      ),
+    }));
+  }, []);
+
   // Set component runtime state (for simulation)
   const setComponentState = useCallback((instanceId: string, newState: Partial<PlacedComponent['state']>) => {
     setState((prev) => ({
@@ -191,10 +218,9 @@ export function useSimulator() {
         return comp;
       });
 
-      // If button is pressed, turn on all LEDs; if released, turn off all LEDs
-      // This simulates: Button -> Arduino -> LED circuit
+      // If button is pressed, turn on all LEDs and buzzers; if released, turn off
       const finalComponents = newComponents.map((comp) => {
-        if (comp.type === 'led') {
+        if (comp.type === 'led' || comp.type === 'buzzer') {
           return { ...comp, state: { ...comp.state, isOn: isPressed } };
         }
         return comp;
@@ -213,10 +239,12 @@ export function useSimulator() {
       // Reset all component states
       const resetComponents = prev.components.map((comp) => ({
         ...comp,
-        state: comp.type === 'led' 
+        state: comp.type === 'led' || comp.type === 'buzzer'
           ? { isOn: false }
           : comp.type === 'push-button'
           ? { isPressed: false }
+          : comp.type === 'potentiometer'
+          ? { potValue: comp.state?.potValue ?? 512 }
           : comp.state,
       }));
 
@@ -234,10 +262,12 @@ export function useSimulator() {
       // Reset all component states
       const resetComponents = prev.components.map((comp) => ({
         ...comp,
-        state: comp.type === 'led'
+        state: comp.type === 'led' || comp.type === 'buzzer'
           ? { isOn: false }
           : comp.type === 'push-button'
           ? { isPressed: false }
+          : comp.type === 'potentiometer'
+          ? { potValue: comp.state?.potValue ?? 512 }
           : comp.state,
       }));
 
@@ -273,6 +303,7 @@ export function useSimulator() {
     removeComponent,
     changeComponentPin,
     changeLEDColor,
+    changeResistorValue,
     setComponentState,
     handleButtonPress,
     startSimulation,

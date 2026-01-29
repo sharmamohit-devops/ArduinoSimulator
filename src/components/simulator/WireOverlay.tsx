@@ -9,8 +9,10 @@ interface WireOverlayProps {
 
 // Component connection point offsets (relative to component position)
 const COMPONENT_CONNECTIONS: Record<string, { x: number; y: number }> = {
-  'led': { x: 28, y: 70 },
+  'led': { x: 30, y: 70 },
   'push-button': { x: 32, y: 56 },
+  'buzzer': { x: 28, y: 50 },
+  'potentiometer': { x: 32, y: 52 },
 };
 
 // Get Arduino pin positions (digital pins D0-D13 on top row)

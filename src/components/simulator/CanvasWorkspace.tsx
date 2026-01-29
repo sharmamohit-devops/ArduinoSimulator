@@ -1,11 +1,15 @@
 import { useRef, useState, useCallback } from 'react';
-import { PlacedComponent, ComponentType, Wire, DigitalPin, LEDColor } from '@/types/simulator';
+import { PlacedComponent, ComponentType, Wire, DigitalPin, LEDColor, ResistorValue, RESISTOR_VALUES } from '@/types/simulator';
 import { ArduinoIcon } from './icons/ArduinoIcon';
 import { LEDIcon } from './icons/LEDIcon';
 import { PushButtonIcon } from './icons/PushButtonIcon';
+import { ResistorIcon } from './icons/ResistorIcon';
+import { BuzzerIcon } from './icons/BuzzerIcon';
+import { PotentiometerIcon } from './icons/PotentiometerIcon';
 import { WireOverlay } from './WireOverlay';
 import { PinSelector } from './PinSelector';
 import { LEDColorSelector } from './LEDColorSelector';
+import { ResistorValueSelector } from './ResistorValueSelector';
 import { X, Cpu, Zap } from 'lucide-react';
 
 interface CanvasWorkspaceProps {
@@ -18,6 +22,7 @@ interface CanvasWorkspaceProps {
   onRemoveComponent: (instanceId: string) => void;
   onChangePin: (instanceId: string, newPin: DigitalPin) => void;
   onChangeLEDColor: (instanceId: string, color: LEDColor) => void;
+  onChangeResistorValue: (instanceId: string, value: ResistorValue) => void;
   onButtonPress: (instanceId: string, isPressed: boolean) => void;
 }
 
@@ -29,8 +34,31 @@ const getComponentSize = (type: ComponentType) => {
       return { width: 60, height: 84 };
     case 'push-button':
       return { width: 64, height: 64 };
+    case 'resistor':
+      return { width: 80, height: 32 };
+    case 'buzzer':
+      return { width: 56, height: 56 };
+    case 'potentiometer':
+      return { width: 64, height: 58 };
     default:
       return { width: 60, height: 60 };
+  }
+};
+
+const getComponentLabel = (type: ComponentType, component: PlacedComponent): string => {
+  switch (type) {
+    case 'led':
+      return 'LED';
+    case 'push-button':
+      return 'Button';
+    case 'resistor':
+      return component.resistorValue ? RESISTOR_VALUES[component.resistorValue].label : '220Ω';
+    case 'buzzer':
+      return 'Buzzer';
+    case 'potentiometer':
+      return 'Pot';
+    default:
+      return '';
   }
 };
 
@@ -44,6 +72,7 @@ export function CanvasWorkspace({
   onRemoveComponent,
   onChangePin,
   onChangeLEDColor,
+  onChangeResistorValue,
   onButtonPress,
 }: CanvasWorkspaceProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -119,6 +148,12 @@ export function CanvasWorkspace({
             onToggle={() => onButtonPress(component.instanceId, !(component.state?.isPressed ?? false))}
           />
         );
+      case 'resistor':
+        return <ResistorIcon size={80} value={component.resistorValue || '220'} />;
+      case 'buzzer':
+        return <BuzzerIcon size={56} isOn={component.state?.isOn ?? false} />;
+      case 'potentiometer':
+        return <PotentiometerIcon size={64} value={component.state?.potValue ?? 512} />;
       default:
         return null;
     }
@@ -148,7 +183,7 @@ export function CanvasWorkspace({
             </div>
             <h3 className="text-xl font-semibold text-foreground mb-2">Build Your Circuit</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Drag components from the palette on the left. Start with an <span className="text-primary font-medium">Arduino Uno</span>, then add <span className="text-red-400 font-medium">LEDs</span> and <span className="text-blue-400 font-medium">Buttons</span>.
+              Drag components from the palette on the left. Start with an <span className="text-primary font-medium">Arduino Uno</span>, then add <span className="text-red-400 font-medium">LEDs</span>, <span className="text-amber-400 font-medium">Resistors</span>, and <span className="text-blue-400 font-medium">Buttons</span>.
             </p>
           </div>
         </div>
@@ -157,8 +192,9 @@ export function CanvasWorkspace({
       {/* Placed components */}
       {components.map((component) => {
         const size = getComponentSize(component.type);
-        const showPinSelector = component.type !== 'arduino-uno' && component.pin !== undefined && hasArduino;
+        const showPinSelector = ['led', 'push-button', 'buzzer'].includes(component.type) && component.pin !== undefined && hasArduino;
         const isLED = component.type === 'led';
+        const isResistor = component.type === 'resistor';
         
         return (
           <div
@@ -192,9 +228,12 @@ export function CanvasWorkspace({
             {/* Component label */}
             {component.type !== 'arduino-uno' && (
               <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-card/95 backdrop-blur-sm px-2.5 py-1 rounded-md text-xs font-medium text-foreground border border-border shadow-md whitespace-nowrap">
-                {component.type === 'led' ? 'LED' : 'Button'}
+                {getComponentLabel(component.type, component)}
                 {component.pin && (
                   <span className="ml-1.5 text-primary font-mono">D{component.pin}</span>
+                )}
+                {component.analogPin && (
+                  <span className="ml-1.5 text-emerald-400 font-mono">{component.analogPin}</span>
                 )}
               </div>
             )}
@@ -212,7 +251,15 @@ export function CanvasWorkspace({
               />
             )}
 
-            {/* Pin selector dropdown - position below color selector for LED */}
+            {/* Resistor value selector - hide during simulation */}
+            {isResistor && !isRunning && (
+              <ResistorValueSelector
+                currentValue={component.resistorValue || '220'}
+                onValueChange={(value) => onChangeResistorValue(component.instanceId, value)}
+              />
+            )}
+
+            {/* Pin selector dropdown */}
             {showPinSelector && !isRunning && (
               <div className={isLED ? 'absolute -bottom-16 left-1/2 -translate-x-1/2' : ''}>
                 <PinSelector
