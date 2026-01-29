@@ -205,15 +205,16 @@ export function useSimulator() {
     }));
   }, []);
 
-  // Handle button press during simulation
-  const handleButtonPress = useCallback((instanceId: string, isPressed: boolean) => {
-    if (!state.isRunning) return;
-
+  // Handle button press during simulation (toggle/latching behavior)
+  const handleButtonPress = useCallback((instanceId: string, newPressedState: boolean) => {
     setState((prev) => {
-      // Update button state
+      // Only allow interaction when simulation is running
+      if (!prev.isRunning) return prev;
+
+      // Update button state with toggle (latching) behavior
       const newComponents = prev.components.map((comp) => {
         if (comp.instanceId === instanceId && comp.type === 'push-button') {
-          return { ...comp, state: { ...comp.state, isPressed } };
+          return { ...comp, state: { ...comp.state, isPressed: newPressedState } };
         }
         return comp;
       });
@@ -221,7 +222,7 @@ export function useSimulator() {
       // If button is pressed, turn on all LEDs and buzzers; if released, turn off
       const finalComponents = newComponents.map((comp) => {
         if (comp.type === 'led' || comp.type === 'buzzer') {
-          return { ...comp, state: { ...comp.state, isOn: isPressed } };
+          return { ...comp, state: { ...comp.state, isOn: newPressedState } };
         }
         return comp;
       });
@@ -231,7 +232,7 @@ export function useSimulator() {
         components: finalComponents,
       };
     });
-  }, [state.isRunning]);
+  }, []);
 
   // Start simulation
   const startSimulation = useCallback(() => {
