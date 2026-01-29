@@ -12,6 +12,8 @@ const Index = () => {
     addComponent,
     moveComponent,
     removeComponent,
+    changeComponentPin,
+    handleButtonPress,
     startSimulation,
     stopSimulation,
     setViewMode,
@@ -53,10 +55,14 @@ const Index = () => {
             /* Component View - Full Canvas */
             <CanvasWorkspace
               components={state.components}
+              wires={state.wires}
               isRunning={state.isRunning}
+              usedPins={state.usedPins}
               onDropComponent={handleDropComponent}
               onMoveComponent={moveComponent}
               onRemoveComponent={removeComponent}
+              onChangePin={changeComponentPin}
+              onButtonPress={handleButtonPress}
             />
           ) : (
             /* Code View - Split View */
@@ -65,10 +71,14 @@ const Index = () => {
               <div className="w-1/2 border-r border-border">
                 <CanvasWorkspace
                   components={state.components}
+                  wires={state.wires}
                   isRunning={state.isRunning}
+                  usedPins={state.usedPins}
                   onDropComponent={handleDropComponent}
                   onMoveComponent={moveComponent}
                   onRemoveComponent={removeComponent}
+                  onChangePin={changeComponentPin}
+                  onButtonPress={handleButtonPress}
                 />
               </div>
               {/* Code Panel - Right half */}

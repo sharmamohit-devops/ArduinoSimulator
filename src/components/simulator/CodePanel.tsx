@@ -10,9 +10,9 @@ function generateArduinoCode(components: PlacedComponent[]): string {
   const leds = components.filter(c => c.type === 'led');
   const buttons = components.filter(c => c.type === 'push-button');
 
-  if (components.length === 0) {
-    return `// Arduino Simulator
-// Add components to the canvas to generate code
+  if (components.length === 0 || !hasArduino) {
+    return `// Arduino Simulator - FOSSEE OSHW
+// Add an Arduino Uno and components to generate code
 
 void setup() {
   // Initialization code
@@ -23,56 +23,85 @@ void loop() {
 }`;
   }
 
-  let setupCode = '';
-  let loopCode = '';
-  let globalVars = '';
+  // Build pin definitions
+  const pinDefs: string[] = [];
+  const setupLines: string[] = [];
+  const loopLines: string[] = [];
 
-  // LED code generation
+  // LED definitions
   leds.forEach((led, index) => {
-    const pin = 13 - index;
-    globalVars += `const int LED_PIN_${index + 1} = ${pin};\n`;
-    setupCode += `  pinMode(LED_PIN_${index + 1}, OUTPUT);\n`;
-    loopCode += `  digitalWrite(LED_PIN_${index + 1}, HIGH);\n  delay(500);\n  digitalWrite(LED_PIN_${index + 1}, LOW);\n  delay(500);\n`;
+    const varName = leds.length === 1 ? 'LED_PIN' : `LED_PIN_${index + 1}`;
+    pinDefs.push(`const int ${varName} = ${led.pin};`);
+    setupLines.push(`  pinMode(${varName}, OUTPUT);`);
   });
 
-  // Button code generation
+  // Button definitions
   buttons.forEach((button, index) => {
-    const pin = 2 + index;
-    globalVars += `const int BUTTON_PIN_${index + 1} = ${pin};\n`;
-    setupCode += `  pinMode(BUTTON_PIN_${index + 1}, INPUT_PULLUP);\n`;
-    if (leds.length > 0) {
-      loopCode = `  // Check button state\n  if (digitalRead(BUTTON_PIN_${index + 1}) == LOW) {\n    digitalWrite(LED_PIN_1, HIGH);\n  } else {\n    digitalWrite(LED_PIN_1, LOW);\n  }\n`;
-    }
+    const varName = buttons.length === 1 ? 'BUTTON_PIN' : `BUTTON_PIN_${index + 1}`;
+    pinDefs.push(`const int ${varName} = ${button.pin};`);
+    setupLines.push(`  pinMode(${varName}, INPUT_PULLUP);`);
   });
 
-  // If only Arduino, add basic blink code
-  if (hasArduino && leds.length === 0 && buttons.length === 0) {
-    globalVars = 'const int LED_BUILTIN_PIN = 13;\n';
-    setupCode = '  pinMode(LED_BUILTIN_PIN, OUTPUT);\n  Serial.begin(9600);\n  Serial.println("Arduino Simulator Ready!");\n';
-    loopCode = '  digitalWrite(LED_BUILTIN_PIN, HIGH);\n  delay(1000);\n  digitalWrite(LED_BUILTIN_PIN, LOW);\n  delay(1000);\n';
+  // Generate loop logic based on components
+  if (buttons.length > 0 && leds.length > 0) {
+    // Button controls LED
+    const buttonVar = buttons.length === 1 ? 'BUTTON_PIN' : 'BUTTON_PIN_1';
+    const ledVar = leds.length === 1 ? 'LED_PIN' : 'LED_PIN_1';
+    
+    loopLines.push(`  // Read button state (LOW when pressed due to INPUT_PULLUP)`);
+    loopLines.push(`  int buttonState = digitalRead(${buttonVar});`);
+    loopLines.push(``);
+    loopLines.push(`  // Button pressed -> LED ON, Button released -> LED OFF`);
+    loopLines.push(`  if (buttonState == LOW) {`);
+    loopLines.push(`    digitalWrite(${ledVar}, HIGH);  // LED ON`);
+    loopLines.push(`  } else {`);
+    loopLines.push(`    digitalWrite(${ledVar}, LOW);   // LED OFF`);
+    loopLines.push(`  }`);
+  } else if (leds.length > 0) {
+    // Just LEDs - blink pattern
+    const ledVar = leds.length === 1 ? 'LED_PIN' : 'LED_PIN_1';
+    loopLines.push(`  // Blink LED`);
+    loopLines.push(`  digitalWrite(${ledVar}, HIGH);`);
+    loopLines.push(`  delay(500);`);
+    loopLines.push(`  digitalWrite(${ledVar}, LOW);`);
+    loopLines.push(`  delay(500);`);
+  } else if (buttons.length > 0) {
+    // Just buttons - read and print
+    const buttonVar = buttons.length === 1 ? 'BUTTON_PIN' : 'BUTTON_PIN_1';
+    setupLines.push(`  Serial.begin(9600);`);
+    loopLines.push(`  // Read and print button state`);
+    loopLines.push(`  int buttonState = digitalRead(${buttonVar});`);
+    loopLines.push(`  if (buttonState == LOW) {`);
+    loopLines.push(`    Serial.println("Button PRESSED");`);
+    loopLines.push(`  }`);
+    loopLines.push(`  delay(100);  // Debounce`);
+  } else {
+    // Just Arduino
+    loopLines.push(`  // Add LED and Button components`);
+    loopLines.push(`  // to generate interactive code`);
   }
 
-  return `// Auto-generated Arduino Code
-// Components: ${hasArduino ? '1 Arduino Uno, ' : ''}${leds.length} LED(s), ${buttons.length} Button(s)
+  return `// Arduino Simulator - Auto-Generated Code
+// FOSSEE OSHW Internship Task
+// Components: Arduino Uno${leds.length > 0 ? `, ${leds.length} LED(s)` : ''}${buttons.length > 0 ? `, ${buttons.length} Button(s)` : ''}
 
-${globalVars}
+${pinDefs.join('\n')}
+
 void setup() {
-${setupCode || '  // No components configured'}
+${setupLines.join('\n') || '  // No components configured'}
 }
 
 void loop() {
-${loopCode || '  // Add components to generate code'}
+${loopLines.join('\n') || '  // Add components to generate code'}
 }`;
 }
 
 export function CodePanel({ components, isRunning }: CodePanelProps) {
   const code = generateArduinoCode(components);
 
-  // Simple syntax highlighting
+  // Enhanced syntax highlighting
   const highlightCode = (code: string) => {
     return code.split('\n').map((line, index) => {
-      let highlighted = line;
-      
       // Comments
       if (line.trim().startsWith('//')) {
         return (
@@ -81,6 +110,8 @@ export function CodePanel({ components, isRunning }: CodePanelProps) {
           </div>
         );
       }
+      
+      let highlighted = line;
       
       // Keywords
       const keywords = ['void', 'int', 'const', 'if', 'else', 'for', 'while', 'return', 'HIGH', 'LOW', 'INPUT', 'OUTPUT', 'INPUT_PULLUP'];
@@ -92,9 +123,12 @@ export function CodePanel({ components, isRunning }: CodePanelProps) {
       // Functions
       const functions = ['pinMode', 'digitalWrite', 'digitalRead', 'analogWrite', 'analogRead', 'delay', 'Serial.begin', 'Serial.println', 'setup', 'loop'];
       functions.forEach(fn => {
-        const regex = new RegExp(`\\b${fn}\\b`, 'g');
+        const regex = new RegExp(`\\b${fn.replace('.', '\\.')}\\b`, 'g');
         highlighted = highlighted.replace(regex, `<span class="syntax-function">${fn}</span>`);
       });
+      
+      // Numbers
+      highlighted = highlighted.replace(/\b(\d+)\b/g, '<span class="text-orange-400">$1</span>');
       
       // Strings
       highlighted = highlighted.replace(/"([^"]*)"/g, '<span class="syntax-string">"$1"</span>');
@@ -106,21 +140,33 @@ export function CodePanel({ components, isRunning }: CodePanelProps) {
   };
 
   return (
-    <div className="h-full flex flex-col bg-code rounded-lg overflow-hidden">
+    <div className="h-full flex flex-col bg-code rounded-lg overflow-hidden border border-border/30">
       <div className="flex items-center justify-between px-4 py-2 bg-code border-b border-border/20">
-        <span className="text-xs font-medium text-code-text/70 uppercase tracking-wide">
-          sketch.ino
-        </span>
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-destructive" />
+            <div className="w-3 h-3 rounded-full bg-warning" />
+            <div className="w-3 h-3 rounded-full bg-success" />
+          </div>
+          <span className="text-xs font-medium text-code-text/70 ml-2">
+            sketch.ino
+          </span>
+        </div>
         {isRunning && (
-          <span className="text-xs text-success flex items-center gap-1.5">
+          <span className="text-xs text-success flex items-center gap-1.5 bg-success/20 px-2 py-0.5 rounded-full">
             <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
             Running
           </span>
         )}
       </div>
-      <pre className="flex-1 overflow-auto p-4 text-sm leading-relaxed text-code-text">
-        <code>{highlightCode(code)}</code>
+      <pre className="flex-1 overflow-auto p-4 text-sm leading-relaxed text-code-text font-mono">
+        <code className="block">{highlightCode(code)}</code>
       </pre>
+      <div className="px-4 py-2 bg-code border-t border-border/20">
+        <p className="text-xs text-code-text/50">
+          Read-only • Code updates automatically with pin changes
+        </p>
+      </div>
     </div>
   );
 }
