@@ -2,95 +2,126 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* Arduino Simulator Design System - Engineering Tool Aesthetic */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 210 20% 98%;
+    --foreground: 220 20% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 20% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 20% 10%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 199 89% 38%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 15% 93%;
+    --secondary-foreground: 220 20% 20%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 15% 96%;
+    --muted-foreground: 220 10% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 199 89% 38%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Simulator-specific tokens */
+    --canvas-bg: 210 15% 96%;
+    --canvas-grid: 210 15% 88%;
+    --panel-bg: 0 0% 100%;
+    --toolbar-bg: 0 0% 100%;
+    --component-bg: 0 0% 100%;
+    --component-border: 210 20% 85%;
+    --component-hover: 199 89% 95%;
+    --code-bg: 220 20% 14%;
+    --code-text: 210 15% 90%;
+    --code-keyword: 199 89% 60%;
+    --code-function: 142 71% 55%;
+    --code-string: 38 92% 60%;
+    --code-comment: 210 10% 50%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 20% 20%;
+    --sidebar-primary: 199 89% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 199 89% 95%;
+    --sidebar-accent-foreground: 199 89% 30%;
+    --sidebar-border: 210 20% 88%;
+    --sidebar-ring: 199 89% 38%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 220 20% 10%;
+    --foreground: 210 15% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 20% 14%;
+    --card-foreground: 210 15% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 20% 14%;
+    --popover-foreground: 210 15% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 210 15% 90%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 220 15% 18%;
+    --muted-foreground: 210 10% 55%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 220 15% 22%;
+    --input: 220 15% 22%;
+    --ring: 199 89% 48%;
+
+    --canvas-bg: 220 20% 12%;
+    --canvas-grid: 220 15% 18%;
+    --panel-bg: 220 20% 14%;
+    --toolbar-bg: 220 20% 14%;
+    --component-bg: 220 15% 18%;
+    --component-border: 220 15% 25%;
+    --component-hover: 199 89% 20%;
+    --code-bg: 220 20% 10%;
+    --code-text: 210 15% 90%;
+
+    --sidebar-background: 220 20% 12%;
+    --sidebar-foreground: 210 15% 90%;
+    --sidebar-primary: 199 89% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 199 89% 20%;
+    --sidebar-accent-foreground: 199 89% 70%;
+    --sidebar-border: 220 15% 22%;
+    --sidebar-ring: 199 89% 48%;
   }
 }
 
@@ -100,6 +131,69 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .canvas-grid {
+    background-image: 
+      linear-gradient(to right, hsl(var(--canvas-grid)) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--canvas-grid)) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .component-card {
+    @apply bg-component border border-component-border rounded-lg p-3 cursor-grab 
+           transition-all duration-200 hover:border-primary hover:shadow-md;
+  }
+
+  .component-card:active {
+    @apply cursor-grabbing shadow-lg scale-105;
+  }
+
+  .toolbar-btn {
+    @apply px-4 py-2 rounded-md font-medium text-sm transition-all duration-200
+           bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+
+  .toolbar-btn-active {
+    @apply bg-primary text-primary-foreground shadow-sm;
+  }
+
+  .sim-btn-start {
+    @apply px-6 py-2.5 rounded-md font-semibold text-sm transition-all duration-200
+           bg-success text-success-foreground hover:opacity-90 shadow-sm;
+  }
+
+  .sim-btn-stop {
+    @apply px-6 py-2.5 rounded-md font-semibold text-sm transition-all duration-200
+           bg-destructive text-destructive-foreground hover:opacity-90 shadow-sm;
+  }
+
+  .code-panel {
+    @apply bg-code text-code-text font-mono text-sm p-4 rounded-lg overflow-auto;
+  }
+
+  .syntax-keyword {
+    color: hsl(var(--code-keyword));
+  }
+
+  .syntax-function {
+    color: hsl(var(--code-function));
+  }
+
+  .syntax-string {
+    color: hsl(var(--code-string));
+  }
+
+  .syntax-comment {
+    color: hsl(var(--code-comment));
+    font-style: italic;
   }
 }
