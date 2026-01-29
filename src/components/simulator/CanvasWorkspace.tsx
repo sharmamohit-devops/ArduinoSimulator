@@ -22,11 +22,11 @@ interface CanvasWorkspaceProps {
 const getComponentSize = (type: ComponentType) => {
   switch (type) {
     case 'arduino-uno':
-      return { width: 120, height: 78 };
+      return { width: 140, height: 91 };
     case 'led':
-      return { width: 48, height: 68 };
+      return { width: 56, height: 84 };
     case 'push-button':
-      return { width: 56, height: 56 };
+      return { width: 64, height: 64 };
     default:
       return { width: 60, height: 60 };
   }
@@ -98,22 +98,21 @@ export function CanvasWorkspace({
   const renderComponent = (component: PlacedComponent) => {
     switch (component.type) {
       case 'arduino-uno':
-        return <ArduinoIcon size={120} />;
+        return <ArduinoIcon size={140} />;
       case 'led':
         return (
           <LEDIcon 
-            size={48} 
+            size={56} 
             isOn={component.state?.isOn ?? false}
           />
         );
       case 'push-button':
         return (
           <PushButtonIcon 
-            size={56} 
+            size={64} 
             isPressed={component.state?.isPressed ?? false}
             interactive={isRunning}
-            onPress={() => onButtonPress(component.instanceId, true)}
-            onRelease={() => onButtonPress(component.instanceId, false)}
+            onToggle={() => onButtonPress(component.instanceId, !(component.state?.isPressed ?? false))}
           />
         );
       default:

@@ -2,126 +2,81 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@400;500;600;700&display=swap');
 
-/* Arduino Simulator Design System - Engineering Tool Aesthetic */
+/* Arduino Simulator Design System - Professional Engineering Aesthetic */
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 220 20% 10%;
+    --background: 220 25% 8%;
+    --foreground: 210 20% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 20% 10%;
+    --card: 220 25% 12%;
+    --card-foreground: 210 20% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
+    --popover: 220 25% 14%;
+    --popover-foreground: 210 20% 95%;
 
-    --primary: 199 89% 38%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 180 100% 45%;
+    --primary-foreground: 220 25% 8%;
 
-    --secondary: 210 15% 93%;
-    --secondary-foreground: 220 20% 20%;
+    --secondary: 220 20% 18%;
+    --secondary-foreground: 210 20% 90%;
 
-    --muted: 210 15% 96%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 220 20% 16%;
+    --muted-foreground: 210 15% 55%;
 
-    --accent: 199 89% 48%;
+    --accent: 280 80% 60%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 85% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 71% 45%;
+    --success: 145 80% 45%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning: 45 100% 55%;
+    --warning-foreground: 220 25% 8%;
 
-    --border: 210 20% 88%;
-    --input: 210 20% 88%;
-    --ring: 199 89% 38%;
+    --border: 220 20% 20%;
+    --input: 220 20% 16%;
+    --ring: 180 100% 45%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     /* Simulator-specific tokens */
-    --canvas-bg: 210 15% 96%;
-    --canvas-grid: 210 15% 88%;
-    --panel-bg: 0 0% 100%;
-    --toolbar-bg: 0 0% 100%;
-    --component-bg: 0 0% 100%;
-    --component-border: 210 20% 85%;
-    --component-hover: 199 89% 95%;
-    --code-bg: 220 20% 14%;
-    --code-text: 210 15% 90%;
-    --code-keyword: 199 89% 60%;
-    --code-function: 142 71% 55%;
-    --code-string: 38 92% 60%;
-    --code-comment: 210 10% 50%;
+    --canvas-bg: 220 25% 6%;
+    --canvas-grid: 220 20% 12%;
+    --panel-bg: 220 25% 10%;
+    --toolbar-bg: 220 25% 10%;
+    --component-bg: 220 25% 14%;
+    --component-border: 220 20% 22%;
+    --component-hover: 180 100% 20%;
+    
+    /* Code editor colors */
+    --code-bg: 220 30% 6%;
+    --code-text: 210 20% 85%;
+    --code-keyword: 280 90% 70%;
+    --code-function: 180 100% 55%;
+    --code-string: 45 100% 60%;
+    --code-comment: 210 15% 45%;
+    --code-number: 35 100% 65%;
+    --code-type: 200 100% 65%;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 20% 20%;
-    --sidebar-primary: 199 89% 38%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 199 89% 95%;
-    --sidebar-accent-foreground: 199 89% 30%;
-    --sidebar-border: 210 20% 88%;
-    --sidebar-ring: 199 89% 38%;
-  }
+    /* LED colors */
+    --led-red: 0 100% 50%;
+    --led-green: 120 100% 45%;
+    --led-blue: 210 100% 55%;
+    --led-yellow: 50 100% 50%;
 
-  .dark {
-    --background: 220 20% 10%;
-    --foreground: 210 15% 95%;
-
-    --card: 220 20% 14%;
-    --card-foreground: 210 15% 95%;
-
-    --popover: 220 20% 14%;
-    --popover-foreground: 210 15% 95%;
-
-    --primary: 199 89% 48%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 220 15% 20%;
-    --secondary-foreground: 210 15% 90%;
-
-    --muted: 220 15% 18%;
-    --muted-foreground: 210 10% 55%;
-
-    --accent: 199 89% 48%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
-
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-
-    --border: 220 15% 22%;
-    --input: 220 15% 22%;
-    --ring: 199 89% 48%;
-
-    --canvas-bg: 220 20% 12%;
-    --canvas-grid: 220 15% 18%;
-    --panel-bg: 220 20% 14%;
-    --toolbar-bg: 220 20% 14%;
-    --component-bg: 220 15% 18%;
-    --component-border: 220 15% 25%;
-    --component-hover: 199 89% 20%;
-    --code-bg: 220 20% 10%;
-    --code-text: 210 15% 90%;
-
-    --sidebar-background: 220 20% 12%;
-    --sidebar-foreground: 210 15% 90%;
-    --sidebar-primary: 199 89% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 199 89% 20%;
-    --sidebar-accent-foreground: 199 89% 70%;
-    --sidebar-border: 220 15% 22%;
-    --sidebar-ring: 199 89% 48%;
+    --sidebar-background: 220 25% 10%;
+    --sidebar-foreground: 210 20% 90%;
+    --sidebar-primary: 180 100% 45%;
+    --sidebar-primary-foreground: 220 25% 8%;
+    --sidebar-accent: 180 100% 15%;
+    --sidebar-accent-foreground: 180 100% 70%;
+    --sidebar-border: 220 20% 18%;
+    --sidebar-ring: 180 100% 45%;
   }
 }
 
@@ -138,48 +93,115 @@
   code, pre, .font-mono {
     font-family: 'JetBrains Mono', monospace;
   }
+
+  .font-display {
+    font-family: 'Orbitron', sans-serif;
+  }
 }
 
 @layer components {
+  /* Canvas with dot grid pattern */
   .canvas-grid {
+    background-color: hsl(var(--canvas-bg));
     background-image: 
-      linear-gradient(to right, hsl(var(--canvas-grid)) 1px, transparent 1px),
-      linear-gradient(to bottom, hsl(var(--canvas-grid)) 1px, transparent 1px);
-    background-size: 20px 20px;
+      radial-gradient(circle, hsl(var(--canvas-grid)) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
 
+  /* Enhanced component cards */
   .component-card {
-    @apply bg-component border border-component-border rounded-lg p-3 cursor-grab 
-           transition-all duration-200 hover:border-primary hover:shadow-md;
+    @apply bg-component border border-component-border rounded-xl p-4 cursor-grab 
+           transition-all duration-300 hover:border-primary/50 relative overflow-hidden;
+    background: linear-gradient(135deg, hsl(var(--component-bg)) 0%, hsl(220 25% 12%) 100%);
+  }
+
+  .component-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.3), transparent);
+  }
+
+  .component-card:hover {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.15), 
+                0 8px 32px hsl(220 25% 0% / 0.4);
+    transform: translateY(-2px);
   }
 
   .component-card:active {
-    @apply cursor-grabbing shadow-lg scale-[1.02];
+    @apply cursor-grabbing scale-[1.02];
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.25);
   }
 
+  /* Toolbar styling */
   .toolbar-btn {
-    @apply px-4 py-2 rounded-md font-medium text-sm transition-all duration-200
+    @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200
            bg-secondary text-secondary-foreground hover:bg-secondary/80;
   }
 
   .toolbar-btn-active {
-    @apply bg-primary text-primary-foreground shadow-sm;
+    @apply bg-primary text-primary-foreground shadow-lg;
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.4);
   }
 
+  /* Simulation buttons */
   .sim-btn-start {
-    @apply px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200
-           bg-success text-success-foreground hover:opacity-90 shadow-md hover:shadow-lg;
+    @apply px-6 py-3 rounded-xl font-bold text-sm transition-all duration-300
+           bg-success text-success-foreground uppercase tracking-wider;
+    background: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(145 80% 35%) 100%);
+    box-shadow: 0 4px 20px hsl(var(--success) / 0.4),
+                inset 0 1px 0 hsl(145 80% 60% / 0.3);
+  }
+
+  .sim-btn-start:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px hsl(var(--success) / 0.5),
+                inset 0 1px 0 hsl(145 80% 60% / 0.3);
+  }
+
+  .sim-btn-start:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 
   .sim-btn-stop {
-    @apply px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200
-           bg-destructive text-destructive-foreground hover:opacity-90 shadow-md hover:shadow-lg;
+    @apply px-6 py-3 rounded-xl font-bold text-sm transition-all duration-300
+           bg-destructive text-destructive-foreground uppercase tracking-wider;
+    background: linear-gradient(135deg, hsl(var(--destructive)) 0%, hsl(0 85% 40%) 100%);
+    box-shadow: 0 4px 20px hsl(var(--destructive) / 0.4),
+                inset 0 1px 0 hsl(0 85% 70% / 0.3);
+    animation: pulse-glow 2s ease-in-out infinite;
   }
 
+  .sim-btn-stop:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px hsl(var(--destructive) / 0.5);
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 4px 20px hsl(var(--destructive) / 0.4); }
+    50% { box-shadow: 0 4px 30px hsl(var(--destructive) / 0.6); }
+  }
+
+  /* Code panel styling */
   .code-panel {
-    @apply bg-code text-code-text font-mono text-sm p-4 rounded-lg overflow-auto;
+    @apply bg-code text-code-text font-mono text-sm rounded-xl overflow-hidden;
+    background: linear-gradient(180deg, hsl(var(--code-bg)) 0%, hsl(220 30% 4%) 100%);
   }
 
+  .code-editor {
+    @apply w-full h-full bg-transparent text-code-text font-mono text-sm 
+           resize-none outline-none p-4 leading-relaxed;
+  }
+
+  .code-editor::selection {
+    background: hsl(var(--primary) / 0.3);
+  }
+
+  /* Syntax highlighting */
   .syntax-keyword {
     color: hsl(var(--code-keyword));
     font-weight: 600;
@@ -198,17 +220,107 @@
     font-style: italic;
   }
 
-  /* LED glow animation */
-  .led-glow {
-    animation: led-pulse 1.5s ease-in-out infinite;
+  .syntax-number {
+    color: hsl(var(--code-number));
   }
 
-  @keyframes led-pulse {
-    0%, 100% {
-      filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 16px currentColor);
+  .syntax-type {
+    color: hsl(var(--code-type));
+  }
+
+  /* LED glow effects */
+  .led-glow-red {
+    filter: drop-shadow(0 0 8px hsl(0 100% 50%)) 
+            drop-shadow(0 0 16px hsl(0 100% 50%)) 
+            drop-shadow(0 0 32px hsl(0 100% 40%));
+    animation: led-pulse-red 0.5s ease-in-out infinite;
+  }
+
+  @keyframes led-pulse-red {
+    0%, 100% { 
+      filter: drop-shadow(0 0 8px hsl(0 100% 50%)) 
+              drop-shadow(0 0 16px hsl(0 100% 50%)) 
+              drop-shadow(0 0 32px hsl(0 100% 40%)); 
     }
-    50% {
-      filter: drop-shadow(0 0 12px currentColor) drop-shadow(0 0 24px currentColor);
+    50% { 
+      filter: drop-shadow(0 0 12px hsl(0 100% 55%)) 
+              drop-shadow(0 0 24px hsl(0 100% 55%)) 
+              drop-shadow(0 0 48px hsl(0 100% 45%)); 
     }
+  }
+
+  /* Neon text effect */
+  .neon-text {
+    text-shadow: 0 0 10px hsl(var(--primary)),
+                 0 0 20px hsl(var(--primary)),
+                 0 0 40px hsl(var(--primary) / 0.5);
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    background: hsl(var(--card) / 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  /* Animated border */
+  .animated-border {
+    position: relative;
+  }
+
+  .animated-border::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(90deg, 
+      hsl(var(--primary)), 
+      hsl(var(--accent)), 
+      hsl(var(--primary)));
+    background-size: 200% 100%;
+    animation: border-flow 3s linear infinite;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  @keyframes border-flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  /* Pulse animation */
+  .animate-pulse-glow {
+    animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  /* Running simulation indicator */
+  .simulation-running {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .simulation-running::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(var(--success) / 0.2), transparent);
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
   }
 }
