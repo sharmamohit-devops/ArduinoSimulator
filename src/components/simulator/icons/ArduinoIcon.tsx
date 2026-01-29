@@ -3,126 +3,182 @@ interface ArduinoIconProps {
   size?: number;
 }
 
-export function ArduinoIcon({ className = '', size = 120 }: ArduinoIconProps) {
-  const scale = size / 120;
-  
+export function ArduinoIcon({ className = '', size = 140 }: ArduinoIconProps) {
   return (
     <svg
       width={size}
       height={size * 0.65}
-      viewBox="0 0 120 78"
+      viewBox="0 0 140 91"
       className={className}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* PCB Board */}
+      {/* PCB Board with realistic texture */}
+      <defs>
+        <linearGradient id="pcbGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#0288D1" />
+          <stop offset="50%" stopColor="#0277BD" />
+          <stop offset="100%" stopColor="#01579B" />
+        </linearGradient>
+        <pattern id="pcbTexture" width="3" height="3" patternUnits="userSpaceOnUse">
+          <circle cx="1.5" cy="1.5" r="0.4" fill="#039BE5" opacity="0.2" />
+        </pattern>
+        <filter id="boardShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="4" stdDeviation="6" floodOpacity="0.5" />
+        </filter>
+        <linearGradient id="copperTrace" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#B87333" />
+          <stop offset="50%" stopColor="#CD9B4F" />
+          <stop offset="100%" stopColor="#B87333" />
+        </linearGradient>
+      </defs>
+      
+      {/* Board base */}
       <rect
         x="2"
         y="2"
-        width="116"
-        height="74"
-        rx="3"
-        fill="#0277BD"
-        stroke="#01579B"
-        strokeWidth="1.5"
+        width="136"
+        height="87"
+        rx="4"
+        fill="url(#pcbGradient)"
+        filter="url(#boardShadow)"
       />
+      <rect x="2" y="2" width="136" height="87" rx="4" fill="url(#pcbTexture)" />
       
-      {/* PCB Texture - subtle grid */}
-      <defs>
-        <pattern id="pcbGrid" width="4" height="4" patternUnits="userSpaceOnUse">
-          <circle cx="2" cy="2" r="0.3" fill="#0288D1" opacity="0.3" />
-        </pattern>
-      </defs>
-      <rect x="2" y="2" width="116" height="74" rx="3" fill="url(#pcbGrid)" />
+      {/* Copper traces */}
+      <g stroke="url(#copperTrace)" strokeWidth="0.5" opacity="0.3">
+        <path d="M20 30 L60 30 L60 50" />
+        <path d="M80 40 L100 40" />
+        <path d="M40 60 L40 80 L80 80" />
+      </g>
       
-      {/* Mounting holes */}
-      <circle cx="8" cy="8" r="2.5" fill="#1A1A1A" stroke="#333" strokeWidth="0.5" />
-      <circle cx="112" cy="8" r="2.5" fill="#1A1A1A" stroke="#333" strokeWidth="0.5" />
-      <circle cx="8" cy="70" r="2.5" fill="#1A1A1A" stroke="#333" strokeWidth="0.5" />
-      <circle cx="112" cy="70" r="2.5" fill="#1A1A1A" stroke="#333" strokeWidth="0.5" />
+      {/* Mounting holes with metallic rings */}
+      {[[8, 8], [132, 8], [8, 83], [132, 83]].map(([cx, cy], i) => (
+        <g key={`hole-${i}`}>
+          <circle cx={cx} cy={cy} r="4" fill="#1A1A1A" />
+          <circle cx={cx} cy={cy} r="3" fill="none" stroke="#C0C0C0" strokeWidth="1" />
+          <circle cx={cx} cy={cy} r="2" fill="#0D0D0D" />
+        </g>
+      ))}
       
-      {/* USB-B Connector */}
-      <rect x="-2" y="22" width="16" height="18" rx="1" fill="#A0A0A0" stroke="#707070" strokeWidth="1" />
-      <rect x="0" y="25" width="12" height="12" rx="0.5" fill="#1A1A1A" />
-      <rect x="2" y="27" width="8" height="8" fill="#2A2A2A" />
+      {/* USB-B Connector - 3D effect */}
+      <g>
+        <rect x="-3" y="28" width="18" height="22" rx="2" fill="#707070" />
+        <rect x="-1" y="30" width="14" height="18" rx="1" fill="#505050" />
+        <rect x="1" y="32" width="10" height="14" fill="#1A1A1A" />
+        <rect x="3" y="34" width="6" height="10" fill="#2D2D2D" />
+        {/* USB logo */}
+        <circle cx="6" cy="39" r="1.5" fill="none" stroke="#404040" strokeWidth="0.5" />
+      </g>
       
       {/* Power barrel jack */}
-      <circle cx="18" cy="66" r="5" fill="#1A1A1A" stroke="#333" strokeWidth="0.5" />
-      <circle cx="18" cy="66" r="2.5" fill="#333" />
+      <g>
+        <rect x="8" y="72" width="16" height="12" rx="2" fill="#1A1A1A" />
+        <circle cx="16" cy="78" r="4" fill="#2D2D2D" />
+        <circle cx="16" cy="78" r="2" fill="#1A1A1A" />
+        <circle cx="16" cy="78" r="1" fill="#0D0D0D" />
+      </g>
       
-      {/* ATmega328P Chip */}
-      <rect x="45" y="28" width="30" height="26" rx="1" fill="#1A1A1A" />
-      <rect x="47" y="30" width="26" height="22" fill="#2D2D2D" />
-      {/* Chip pins - left side */}
-      {[...Array(7)].map((_, i) => (
-        <rect key={`chip-l-${i}`} x="42" y={30 + i * 3} width="4" height="1.5" fill="#C0C0C0" />
-      ))}
-      {/* Chip pins - right side */}
-      {[...Array(7)].map((_, i) => (
-        <rect key={`chip-r-${i}`} x="74" y={30 + i * 3} width="4" height="1.5" fill="#C0C0C0" />
-      ))}
-      {/* Chip notch */}
-      <circle cx="60" cy="30" r="2" fill="#1A1A1A" />
-      {/* Chip text */}
-      <text x="60" y="43" fontSize="3" fill="#808080" textAnchor="middle" fontFamily="monospace">ATMEGA328P</text>
+      {/* ATmega328P Chip with realistic details */}
+      <g>
+        <rect x="50" y="32" width="36" height="32" rx="2" fill="#1A1A1A" />
+        <rect x="52" y="34" width="32" height="28" fill="#252525" />
+        {/* Chip notch */}
+        <circle cx="70" cy="34" r="3" fill="#1A1A1A" />
+        {/* Chip pins - left side */}
+        {[...Array(8)].map((_, i) => (
+          <rect key={`chip-l-${i}`} x="46" y={35 + i * 3.2} width="5" height="2" rx="0.5" fill="#C0C0C0" />
+        ))}
+        {/* Chip pins - right side */}
+        {[...Array(8)].map((_, i) => (
+          <rect key={`chip-r-${i}`} x="85" y={35 + i * 3.2} width="5" height="2" rx="0.5" fill="#C0C0C0" />
+        ))}
+        {/* Chip text */}
+        <text x="68" y="48" fontSize="3.5" fill="#808080" textAnchor="middle" fontFamily="monospace">ATMEGA</text>
+        <text x="68" y="53" fontSize="3.5" fill="#808080" textAnchor="middle" fontFamily="monospace">328P-PU</text>
+      </g>
       
       {/* Crystal oscillator */}
-      <rect x="80" y="32" width="6" height="14" rx="1" fill="#C0C0C0" stroke="#A0A0A0" strokeWidth="0.5" />
-      <text x="83" y="41" fontSize="2.5" fill="#666" textAnchor="middle" fontFamily="monospace">16</text>
+      <rect x="94" y="38" width="8" height="18" rx="1.5" fill="#D4D4D4" stroke="#B0B0B0" strokeWidth="0.5" />
+      <text x="98" y="49" fontSize="3" fill="#505050" textAnchor="middle" fontFamily="monospace">16</text>
+      <text x="98" y="53" fontSize="2.5" fill="#505050" textAnchor="middle" fontFamily="monospace">MHz</text>
       
       {/* Reset button */}
-      <rect x="88" y="14" width="8" height="6" rx="1" fill="#1A1A1A" />
-      <rect x="89.5" y="15.5" width="5" height="3" rx="0.5" fill="#D32F2F" />
-      <text x="92" y="24" fontSize="2" fill="#FFF" textAnchor="middle" fontFamily="monospace">RST</text>
+      <g>
+        <rect x="106" y="16" width="10" height="8" rx="1.5" fill="#1A1A1A" />
+        <rect x="107.5" y="17.5" width="7" height="5" rx="1" fill="#CC3333">
+          <animate attributeName="fill" values="#CC3333;#E63939;#CC3333" dur="2s" repeatCount="indefinite" />
+        </rect>
+      </g>
+      <text x="111" y="28" fontSize="3" fill="#FFFFFF" textAnchor="middle" fontFamily="monospace">RST</text>
       
       {/* Status LEDs */}
-      <circle cx="100" cy="54" r="1.5" fill="#4CAF50" />
-      <text x="100" y="59" fontSize="2" fill="#FFF" textAnchor="middle">ON</text>
-      <circle cx="106" cy="54" r="1.5" fill="#FFC107" />
-      <text x="106" y="59" fontSize="2" fill="#FFF" textAnchor="middle">L</text>
-      <circle cx="100" cy="46" r="1.5" fill="#4CAF50" />
-      <text x="100" y="44" fontSize="2" fill="#FFF" textAnchor="middle">TX</text>
-      <circle cx="106" cy="46" r="1.5" fill="#F44336" />
-      <text x="106" y="44" fontSize="2" fill="#FFF" textAnchor="middle">RX</text>
+      <g>
+        <circle cx="118" cy="58" r="2" fill="#1B5E20">
+          <animate attributeName="fill" values="#1B5E20;#4CAF50;#1B5E20" dur="1s" repeatCount="indefinite" />
+        </circle>
+        <text x="118" y="64" fontSize="2.5" fill="#FFFFFF" textAnchor="middle">ON</text>
+        
+        <circle cx="126" cy="58" r="2" fill="#F57C00">
+          <animate attributeName="opacity" values="1;0.3;1" dur="0.5s" repeatCount="indefinite" />
+        </circle>
+        <text x="126" y="64" fontSize="2.5" fill="#FFFFFF" textAnchor="middle">L</text>
+        
+        <circle cx="118" cy="48" r="2" fill="#4CAF50" />
+        <text x="118" y="45" fontSize="2.5" fill="#FFFFFF" textAnchor="middle">TX</text>
+        
+        <circle cx="126" cy="48" r="2" fill="#F44336" />
+        <text x="126" y="45" fontSize="2.5" fill="#FFFFFF" textAnchor="middle">RX</text>
+      </g>
       
-      {/* Digital pins header - top (D0-D13) */}
-      <rect x="22" y="3" width="88" height="8" rx="0.5" fill="#1A1A1A" />
+      {/* Digital pins header - top */}
+      <rect x="26" y="3" width="100" height="10" rx="1" fill="#1A1A1A" />
       {[...Array(14)].map((_, i) => (
         <g key={`dpin-${i}`}>
-          <rect x={24 + i * 6} y="5" width="3.5" height="4" rx="0.3" fill="#FFD700" />
-          <text x={25.75 + i * 6} y="15" fontSize="2.5" fill="#FFF" textAnchor="middle" fontFamily="monospace">
+          <rect x={28 + i * 7} y="5" width="4" height="6" rx="0.5" fill="#FFD700" />
+          <rect x={28.5 + i * 7} y="5.5" width="3" height="2" fill="#FFF59D" opacity="0.5" />
+          <text x={30 + i * 7} y="17" fontSize="3" fill="#FFFFFF" textAnchor="middle" fontFamily="monospace">
             {i}
           </text>
         </g>
       ))}
-      <text x="66" y="20" fontSize="3" fill="#FFF" textAnchor="middle" fontFamily="monospace">DIGITAL</text>
+      <text x="76" y="24" fontSize="3.5" fill="#00E5FF" textAnchor="middle" fontFamily="monospace" fontWeight="bold">DIGITAL (PWM~)</text>
       
       {/* Analog pins header - bottom */}
-      <rect x="28" y="67" width="48" height="8" rx="0.5" fill="#1A1A1A" />
+      <rect x="32" y="78" width="54" height="10" rx="1" fill="#1A1A1A" />
       {['A0', 'A1', 'A2', 'A3', 'A4', 'A5'].map((label, i) => (
         <g key={`apin-${i}`}>
-          <rect x={30 + i * 7.5} y="69" width="3.5" height="4" rx="0.3" fill="#FFD700" />
-          <text x={31.75 + i * 7.5} y="65" fontSize="2.5" fill="#FFF" textAnchor="middle" fontFamily="monospace">
+          <rect x={34 + i * 8.5} y="80" width="4" height="6" rx="0.5" fill="#FFD700" />
+          <rect x={34.5 + i * 8.5} y="80.5" width="3" height="2" fill="#FFF59D" opacity="0.5" />
+          <text x={36 + i * 8.5} y="76" fontSize="2.5" fill="#FFFFFF" textAnchor="middle" fontFamily="monospace">
             {label}
           </text>
         </g>
       ))}
-      <text x="52" y="63" fontSize="3" fill="#FFF" textAnchor="middle" fontFamily="monospace">ANALOG</text>
+      <text x="59" y="72" fontSize="3" fill="#00E5FF" textAnchor="middle" fontFamily="monospace" fontWeight="bold">ANALOG IN</text>
       
-      {/* Power pins header */}
-      <rect x="80" y="67" width="30" height="8" rx="0.5" fill="#1A1A1A" />
-      {['5V', 'GND', 'VIN'].map((label, i) => (
+      {/* Power pins */}
+      <rect x="92" y="78" width="36" height="10" rx="1" fill="#1A1A1A" />
+      {[
+        { label: '5V', color: '#DC2626' },
+        { label: 'GND', color: '#1A1A1A' },
+        { label: 'GND', color: '#1A1A1A' },
+        { label: 'VIN', color: '#DC2626' }
+      ].map((pin, i) => (
         <g key={`ppin-${i}`}>
-          <rect x={82 + i * 9} y="69" width="3.5" height="4" rx="0.3" fill={label === 'GND' ? '#333' : '#DC2626'} />
-          <text x={83.75 + i * 9} y="65" fontSize="2.5" fill="#FFF" textAnchor="middle" fontFamily="monospace">
-            {label}
+          <rect x={94 + i * 8.5} y="80" width="4" height="6" rx="0.5" fill={pin.color === '#1A1A1A' ? '#404040' : '#FFD700'} />
+          <text x={96 + i * 8.5} y="76" fontSize="2.5" fill="#FFFFFF" textAnchor="middle" fontFamily="monospace">
+            {pin.label}
           </text>
         </g>
       ))}
       
-      {/* Arduino logo text */}
-      <text x="30" y="45" fontSize="6" fill="#FFF" fontWeight="bold" fontFamily="sans-serif">ARDUINO</text>
-      <text x="30" y="52" fontSize="4" fill="#B3E5FC" fontFamily="sans-serif">UNO</text>
+      {/* Arduino branding */}
+      <text x="34" y="48" fontSize="8" fill="#FFFFFF" fontWeight="bold" fontFamily="sans-serif">ARDUINO</text>
+      <text x="34" y="58" fontSize="6" fill="#00E5FF" fontFamily="sans-serif" fontWeight="600">UNO R3</text>
+      
+      {/* Decorative elements */}
+      <rect x="120" y="70" width="12" height="8" rx="1" fill="#2D2D2D" opacity="0.5" />
     </svg>
   );
 }
