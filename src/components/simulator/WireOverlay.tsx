@@ -310,21 +310,58 @@ export function WireOverlay({ components, wires, isRunning = false }: WireOverla
             </text>
           </g>
 
-          {/* Active flow animation */}
+          {/* Active flow animation - Current flows FROM Arduino TO Component */}
           {wire.isActive && (
             <>
-              <circle r="3" fill="#ffffff" opacity="0.8">
+              {/* Outer glow particle */}
+              <circle r="4" fill={wire.color} opacity="0.4">
                 <animateMotion
-                  dur="0.8s"
+                  dur="0.6s"
                   repeatCount="indefinite"
-                  path={wire.path}
+                  path={reversePath(wire.path)}
+                  keyPoints="1;0"
+                  keyTimes="0;1"
                 />
               </circle>
+              {/* Main particle */}
+              <circle r="3" fill="#ffffff" opacity="0.9">
+                <animateMotion
+                  dur="0.6s"
+                  repeatCount="indefinite"
+                  path={reversePath(wire.path)}
+                  keyPoints="1;0"
+                  keyTimes="0;1"
+                />
+              </circle>
+              {/* Inner colored particle */}
               <circle r="2" fill={wire.color}>
                 <animateMotion
-                  dur="0.8s"
+                  dur="0.6s"
                   repeatCount="indefinite"
-                  path={wire.path}
+                  path={reversePath(wire.path)}
+                  keyPoints="1;0"
+                  keyTimes="0;1"
+                />
+              </circle>
+              {/* Second trailing particle */}
+              <circle r="2.5" fill="#ffffff" opacity="0.6">
+                <animateMotion
+                  dur="0.6s"
+                  repeatCount="indefinite"
+                  path={reversePath(wire.path)}
+                  keyPoints="1;0"
+                  keyTimes="0;1"
+                  begin="0.15s"
+                />
+              </circle>
+              <circle r="1.5" fill={wire.color} opacity="0.8">
+                <animateMotion
+                  dur="0.6s"
+                  repeatCount="indefinite"
+                  path={reversePath(wire.path)}
+                  keyPoints="1;0"
+                  keyTimes="0;1"
+                  begin="0.15s"
                 />
               </circle>
             </>
@@ -346,4 +383,11 @@ function adjustBrightness(hex: string, factor: number): string {
   const newB = Math.min(255, Math.round(b * factor));
   
   return `rgb(${newR}, ${newG}, ${newB})`;
+}
+
+// Helper function to reverse path direction for animation (Arduino → Component)
+function reversePath(path: string): string {
+  // The animateMotion will use keyPoints="1;0" to reverse direction
+  // This keeps the path but animation goes from end to start
+  return path;
 }
