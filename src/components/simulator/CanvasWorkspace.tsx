@@ -177,13 +177,13 @@ export function CanvasWorkspace({
       {/* Empty state */}
       {components.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="text-center max-w-md px-8">
-            <div className="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center border border-primary/30">
-              <Cpu className="w-12 h-12 text-primary" />
+          <div className="text-center max-w-sm px-6">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-lg bg-muted flex items-center justify-center border border-border">
+              <Cpu className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">Build Your Circuit</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Drag components from the palette on the left. Start with an <span className="text-primary font-medium">Arduino Uno</span>, then add <span className="text-red-400 font-medium">LEDs</span>, <span className="text-amber-400 font-medium">Resistors</span>, and <span className="text-blue-400 font-medium">Buttons</span>.
+            <h3 className="text-base font-medium text-foreground mb-1">Build Your Circuit</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Drag components from the library. Start with an Arduino Uno, then add LEDs (D10), Buttons (D2), and Resistors.
             </p>
           </div>
         </div>
@@ -199,7 +199,7 @@ export function CanvasWorkspace({
         return (
           <div
             key={component.instanceId}
-            className={`absolute group transition-shadow duration-200 ${
+            className={`absolute group ${
               draggedComponent === component.instanceId ? 'z-50' : 'z-10'
             } ${isRunning && component.type === 'push-button' ? 'cursor-pointer' : 'cursor-move'}`}
             style={{
@@ -210,7 +210,7 @@ export function CanvasWorkspace({
             }}
             onMouseDown={(e) => handleComponentMouseDown(e, component)}
           >
-            {/* Delete button - hide during simulation */}
+            {/* Delete button */}
             {!isRunning && (
               <button
                 onClick={(e) => {
@@ -219,7 +219,7 @@ export function CanvasWorkspace({
                 }}
                 className="absolute -top-2 -right-2 w-5 h-5 bg-destructive text-destructive-foreground rounded-full 
                            flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity
-                           hover:scale-110 z-20 shadow-lg"
+                           hover:bg-destructive/90 z-20"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -227,13 +227,13 @@ export function CanvasWorkspace({
             
             {/* Component label */}
             {component.type !== 'arduino-uno' && (
-              <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-card/95 backdrop-blur-sm px-2.5 py-1 rounded-md text-xs font-medium text-foreground border border-border shadow-md whitespace-nowrap">
+              <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-card border border-border px-2 py-0.5 rounded text-[10px] font-medium text-foreground whitespace-nowrap">
                 {getComponentLabel(component.type, component)}
                 {component.pin && (
-                  <span className="ml-1.5 text-primary font-mono">D{component.pin}</span>
+                  <span className="ml-1 text-primary font-mono">D{component.pin}</span>
                 )}
                 {component.analogPin && (
-                  <span className="ml-1.5 text-emerald-400 font-mono">{component.analogPin}</span>
+                  <span className="ml-1 text-primary font-mono">{component.analogPin}</span>
                 )}
               </div>
             )}
@@ -243,7 +243,7 @@ export function CanvasWorkspace({
               {renderComponent(component)}
             </div>
 
-            {/* LED color selector - hide during simulation */}
+            {/* LED color selector */}
             {isLED && !isRunning && (
               <LEDColorSelector
                 currentColor={component.ledColor || 'red'}
@@ -251,7 +251,7 @@ export function CanvasWorkspace({
               />
             )}
 
-            {/* Resistor value selector - hide during simulation */}
+            {/* Resistor value selector */}
             {isResistor && !isRunning && (
               <ResistorValueSelector
                 currentValue={component.resistorValue || '220'}
@@ -259,14 +259,14 @@ export function CanvasWorkspace({
               />
             )}
 
-            {/* Pin selector dropdown */}
+            {/* Pin selector */}
             {showPinSelector && !isRunning && (
               <div className={isLED ? 'absolute -bottom-16 left-1/2 -translate-x-1/2' : ''}>
                 <PinSelector
                   currentPin={component.pin!}
                   usedPins={usedPins}
                   instanceId={component.instanceId}
-                  componentType={component.type as 'led' | 'push-button'}
+                  componentType={component.type as 'led' | 'push-button' | 'buzzer'}
                   onPinChange={(newPin) => onChangePin(component.instanceId, newPin)}
                 />
               </div>
@@ -275,22 +275,13 @@ export function CanvasWorkspace({
         );
       })}
 
-      {/* Running indicator */}
-      {isRunning && (
-        <div className="absolute bottom-4 left-4 flex items-center gap-3 bg-success/95 text-success-foreground px-4 py-2 rounded-lg text-sm font-medium shadow-lg border border-success/50">
-          <Zap className="w-4 h-4 animate-pulse" />
-          <span>Simulation Running</span>
-          <span className="text-success-foreground/70">— Click the button!</span>
-        </div>
-      )}
-
-      {/* Instructions when not running */}
+      {/* Instructions */}
       {!isRunning && components.length > 0 && (
-        <div className="absolute bottom-4 right-4 bg-card/95 backdrop-blur-sm border border-border px-4 py-2.5 rounded-lg text-sm text-muted-foreground shadow-lg">
+        <div className="absolute bottom-3 right-3 bg-card border border-border px-3 py-2 rounded text-xs text-muted-foreground">
           {!hasArduino ? (
-            <span className="text-warning font-medium">⚠ Add an Arduino Uno to enable wiring</span>
+            <span className="text-warning">⚠ Add an Arduino Uno to enable wiring</span>
           ) : (
-            <span>Press <kbd className="px-1.5 py-0.5 bg-primary/20 text-primary rounded text-xs font-mono mx-1">Start</kbd> to run simulation</span>
+            <span>Click <strong>Start</strong> to run simulation</span>
           )}
         </div>
       )}
