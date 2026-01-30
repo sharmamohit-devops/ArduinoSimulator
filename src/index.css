@@ -8,76 +8,77 @@
 
 @layer base {
   :root {
-    /* Neutral academic palette */
-    --background: 220 14% 10%;
-    --foreground: 220 9% 94%;
+    /* Refined dark theme - cleaner contrast */
+    --background: 222 20% 8%;
+    --foreground: 210 20% 96%;
 
-    --card: 220 14% 12%;
-    --card-foreground: 220 9% 94%;
+    --card: 222 18% 11%;
+    --card-foreground: 210 20% 96%;
 
-    --popover: 220 14% 14%;
-    --popover-foreground: 220 9% 94%;
+    --popover: 222 18% 13%;
+    --popover-foreground: 210 20% 96%;
 
-    --primary: 210 100% 50%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 222 20% 8%;
 
-    --secondary: 220 14% 18%;
-    --secondary-foreground: 220 9% 85%;
+    --secondary: 222 15% 16%;
+    --secondary-foreground: 210 15% 80%;
 
-    --muted: 220 14% 16%;
-    --muted-foreground: 220 9% 55%;
+    --muted: 222 15% 14%;
+    --muted-foreground: 210 10% 50%;
 
-    --accent: 220 14% 20%;
-    --accent-foreground: 220 9% 94%;
+    --accent: 222 15% 18%;
+    --accent-foreground: 210 20% 92%;
 
-    --destructive: 0 65% 50%;
+    --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 60% 40%;
+    --success: 152 60% 42%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 80% 50%;
-    --warning-foreground: 220 14% 10%;
+    --warning: 40 85% 55%;
+    --warning-foreground: 222 20% 8%;
 
-    --border: 220 14% 22%;
-    --input: 220 14% 16%;
-    --ring: 210 100% 50%;
+    --border: 222 15% 20%;
+    --input: 222 15% 14%;
+    --ring: 199 89% 48%;
 
     --radius: 0.375rem;
 
-    /* Simulator-specific tokens */
-    --canvas-bg: 220 14% 8%;
-    --canvas-grid: 220 14% 14%;
-    --panel-bg: 220 14% 11%;
-    --toolbar-bg: 220 14% 9%;
-    --component-bg: 220 14% 14%;
-    --component-border: 220 14% 24%;
-    --component-hover: 210 100% 30%;
+    /* Simulator tokens */
+    --canvas-bg: 222 20% 6%;
+    --canvas-grid: 222 15% 12%;
+    --panel-bg: 222 18% 10%;
+    --toolbar-bg: 222 20% 7%;
+    --component-bg: 222 15% 12%;
+    --component-border: 222 12% 22%;
+    --component-hover: 199 70% 35%;
     
-    /* Code editor colors */
-    --code-bg: 220 14% 6%;
-    --code-text: 220 9% 85%;
-    --code-keyword: 280 60% 60%;
-    --code-function: 200 80% 60%;
-    --code-string: 30 70% 55%;
-    --code-comment: 220 14% 45%;
-    --code-number: 35 80% 55%;
-    --code-type: 180 60% 50%;
+    /* Code editor */
+    --code-bg: 222 20% 5%;
+    --code-text: 210 15% 82%;
+    --code-keyword: 280 55% 62%;
+    --code-function: 199 75% 58%;
+    --code-string: 32 70% 55%;
+    --code-comment: 222 10% 42%;
+    --code-number: 38 80% 55%;
+    --code-type: 175 55% 50%;
 
-    /* LED colors - clear distinction */
-    --led-red: 0 85% 55%;
-    --led-green: 142 70% 45%;
-    --led-blue: 210 90% 55%;
-    --led-yellow: 45 90% 55%;
+    /* LED colors */
+    --led-red: 0 80% 55%;
+    --led-green: 145 65% 45%;
+    --led-blue: 205 85% 55%;
+    --led-yellow: 48 90% 55%;
 
-    --sidebar-background: 220 14% 9%;
-    --sidebar-foreground: 220 9% 90%;
-    --sidebar-primary: 210 100% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 14% 16%;
-    --sidebar-accent-foreground: 220 9% 75%;
-    --sidebar-border: 220 14% 20%;
-    --sidebar-ring: 210 100% 50%;
+    /* Sidebar */
+    --sidebar-background: 222 20% 7%;
+    --sidebar-foreground: 210 15% 88%;
+    --sidebar-primary: 199 89% 48%;
+    --sidebar-primary-foreground: 222 20% 8%;
+    --sidebar-accent: 222 15% 14%;
+    --sidebar-accent-foreground: 210 15% 72%;
+    --sidebar-border: 222 15% 18%;
+    --sidebar-ring: 199 89% 48%;
   }
 }
 
