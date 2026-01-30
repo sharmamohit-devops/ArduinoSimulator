@@ -93,17 +93,18 @@ export function ComponentPalette({ onDragStart }: ComponentPaletteProps) {
   const categoryOrder = ['board', 'output', 'input', 'passive'];
 
   return (
-    <aside className="w-64 bg-sidebar border-r border-border flex flex-col h-full">
+    <aside className="w-72 bg-sidebar border-r border-border flex flex-col h-full">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-border">
-        <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider">
+      <div className="px-4 py-4 border-b border-border bg-gradient-to-b from-sidebar-accent/30 to-transparent">
+        <h2 className="text-sm font-semibold text-foreground tracking-tight flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
           Component Library
         </h2>
-        <p className="text-[10px] text-muted-foreground mt-0.5">Drag components to canvas</p>
+        <p className="text-[11px] text-muted-foreground mt-1">Drag components to canvas</p>
       </div>
       
       {/* Component List */}
-      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
+      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
         {categoryOrder.map((category) => {
           const components = groupedComponents[category];
           if (!components) return null;
@@ -111,13 +112,13 @@ export function ComponentPalette({ onDragStart }: ComponentPaletteProps) {
           return (
             <div key={category}>
               {/* Category Header */}
-              <div className="flex items-center gap-1.5 mb-2 text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+              <div className="flex items-center gap-2 mb-2.5 text-[11px] text-muted-foreground uppercase tracking-wider font-medium px-1">
                 {getCategoryIcon(category)}
                 <span>{getCategoryLabel(category)}</span>
               </div>
               
               {/* Components */}
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 {components.map((component) => {
                   const defaultPin = getDefaultPin(component.id);
                   
@@ -126,32 +127,35 @@ export function ComponentPalette({ onDragStart }: ComponentPaletteProps) {
                       key={component.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, component.id)}
-                      className="component-card group py-2.5"
+                      className="group relative p-3 bg-card border border-border rounded-lg cursor-grab 
+                                 hover:border-primary/50 hover:bg-card/80 transition-all duration-200
+                                 active:cursor-grabbing active:border-primary"
                     >
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-3">
                         {/* Icon */}
-                        <div className="flex-shrink-0 p-1 bg-muted/30 rounded flex items-center justify-center min-w-[48px] min-h-[36px]">
+                        <div className="flex-shrink-0 p-2 bg-secondary/50 rounded-md flex items-center justify-center min-w-[52px] min-h-[40px]">
                           {getComponentIcon(component.id)}
                         </div>
                         
                         {/* Info */}
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-xs font-medium text-foreground">
+                          <h3 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
                             {component.name}
                           </h3>
-                          <p className="text-[10px] text-muted-foreground line-clamp-1">
+                          <p className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">
                             {component.description}
                           </p>
                           {defaultPin && (
-                            <p className="text-[9px] font-mono mt-1 text-primary/80">
-                              Default: {defaultPin}
-                            </p>
+                            <span className="inline-flex items-center gap-1 mt-1.5 text-[10px] font-mono 
+                                           bg-primary/10 text-primary px-2 py-0.5 rounded">
+                              Pin: {defaultPin}
+                            </span>
                           )}
                         </div>
                         
                         {/* Drag handle */}
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                          <GripVertical className="w-3 h-3 text-muted-foreground/50" />
+                          <GripVertical className="w-4 h-4 text-muted-foreground/50" />
                         </div>
                       </div>
                     </div>
@@ -163,22 +167,20 @@ export function ComponentPalette({ onDragStart }: ComponentPaletteProps) {
         })}
       </div>
       
-      {/* Pin Info */}
-      <div className="px-3 py-3 border-t border-border">
-        <div className="bg-muted/30 rounded p-2.5 space-y-2">
-          <div className="flex items-start gap-1.5 text-[10px] text-muted-foreground">
-            <Info className="w-3 h-3 mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="font-medium text-foreground/80 mb-1">Default Pin Mapping</p>
-              <ul className="space-y-0.5">
-                <li>• LED → D{DEFAULT_LED_PIN}</li>
-                <li>• Push Button → D{DEFAULT_BUTTON_PIN}</li>
-                <li>• Buzzer → D{DEFAULT_BUZZER_PIN}</li>
-              </ul>
-              <p className="mt-1.5 text-muted-foreground/80">
-                Only Digital Pins (D2–D13) are supported
-              </p>
-            </div>
+      {/* Pin Info Footer */}
+      <div className="px-4 py-4 border-t border-border bg-gradient-to-t from-sidebar-accent/20 to-transparent">
+        <div className="flex items-start gap-2.5">
+          <Info className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+          <div className="text-[11px] text-muted-foreground space-y-1.5">
+            <p className="font-medium text-foreground/90">Default Pin Mapping</p>
+            <ul className="space-y-0.5 font-mono">
+              <li>LED → <span className="text-primary">D{DEFAULT_LED_PIN}</span></li>
+              <li>Button → <span className="text-primary">D{DEFAULT_BUTTON_PIN}</span></li>
+              <li>Buzzer → <span className="text-primary">D{DEFAULT_BUZZER_PIN}</span></li>
+            </ul>
+            <p className="text-muted-foreground/70 text-[10px] pt-1">
+              Digital Pins D2–D13 supported
+            </p>
           </div>
         </div>
       </div>
