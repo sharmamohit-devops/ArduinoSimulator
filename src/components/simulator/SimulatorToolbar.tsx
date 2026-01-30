@@ -1,4 +1,4 @@
-import { Play, Square, LayoutGrid, Code, RotateCcw, CircuitBoard } from 'lucide-react';
+import { Play, Square, LayoutGrid, Code, RotateCcw, CircuitBoard, Sparkles } from 'lucide-react';
 
 interface SimulatorToolbarProps {
   viewMode: 'component' | 'code';
@@ -20,31 +20,36 @@ export function SimulatorToolbar({
   onClear,
 }: SimulatorToolbarProps) {
   return (
-    <header className="h-14 bg-toolbar border-b border-border flex items-center justify-between px-5">
+    <header className="h-16 toolbar-gradient border-b border-border/50 flex items-center justify-between px-6">
       {/* Left: Logo and title */}
-      <div className="flex items-center gap-3">
-        <div className="w-9 h-9 bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/40 rounded-lg flex items-center justify-center">
-          <CircuitBoard className="w-5 h-5 text-primary" />
+      <div className="flex items-center gap-4">
+        <div className="relative group">
+          <div className="absolute inset-0 bg-primary/20 rounded-xl blur-lg group-hover:bg-primary/30 transition-all duration-300" />
+          <div className="relative w-11 h-11 bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/40 rounded-xl flex items-center justify-center group-hover:border-primary/60 transition-all duration-300">
+            <CircuitBoard className="w-6 h-6 text-primary" />
+          </div>
         </div>
         <div>
-          <h1 className="text-base font-semibold text-foreground tracking-tight">
-            <span className="text-primary">Ms</span> Simulator
+          <h1 className="text-lg font-bold text-foreground tracking-tight flex items-center gap-2">
+            <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">Ms</span>
+            <span>Simulator</span>
+            <Sparkles className="w-4 h-4 text-primary/60" />
           </h1>
-          <p className="text-[10px] text-muted-foreground tracking-wide">
-            FOSSEE OSHW • Arduino Circuit Simulator
+          <p className="text-xs text-muted-foreground tracking-wide">
+            Arduino Circuit Simulator • FOSSEE OSHW
           </p>
         </div>
       </div>
 
       {/* Center: View mode toggle + Status */}
-      <div className="flex items-center gap-5">
-        <div className="flex items-center gap-0.5 bg-secondary/50 rounded-lg p-1">
+      <div className="flex items-center gap-6">
+        <div className="flex items-center p-1 bg-secondary/40 rounded-xl border border-border/50">
           <button
             onClick={() => onViewModeChange('component')}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
               viewMode === 'component'
-                ? 'bg-primary text-primary-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                ? 'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25'
+                : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
             }`}
           >
             <LayoutGrid className="w-4 h-4" />
@@ -52,10 +57,10 @@ export function SimulatorToolbar({
           </button>
           <button
             onClick={() => onViewModeChange('code')}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
               viewMode === 'code'
-                ? 'bg-primary text-primary-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                ? 'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25'
+                : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
             }`}
           >
             <Code className="w-4 h-4" />
@@ -64,42 +69,42 @@ export function SimulatorToolbar({
         </div>
 
         {/* Simulation Status */}
-        <div className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border ${
+        <div className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-300 ${
           isRunning 
-            ? 'bg-success/10 text-success border-success/30' 
-            : 'bg-secondary/30 text-muted-foreground border-border'
+            ? 'bg-success/15 text-success border-success/40 shadow-lg shadow-success/10' 
+            : 'bg-secondary/30 text-muted-foreground border-border/50'
         }`}>
-          <span className={`w-2 h-2 rounded-full ${isRunning ? 'bg-success animate-pulse' : 'bg-muted-foreground/40'}`} />
-          Status: {isRunning ? 'RUNNING' : 'STOPPED'}
+          <span className={`w-2.5 h-2.5 rounded-full ${isRunning ? 'bg-success status-pulse' : 'bg-muted-foreground/40'}`} />
+          {isRunning ? 'RUNNING' : 'STOPPED'}
         </div>
       </div>
 
       {/* Right: Controls */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         {/* Reset Circuit Button */}
         <button
           onClick={onClear}
           disabled={!hasComponents || isRunning}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium 
-                     text-muted-foreground hover:text-foreground hover:bg-secondary 
-                     transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed
-                     border border-transparent hover:border-border"
-          title="Reset Circuit - Clears all components"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium 
+                     text-muted-foreground hover:text-foreground
+                     bg-secondary/30 hover:bg-secondary/50 border border-border/50 hover:border-border
+                     transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed
+                     disabled:hover:bg-secondary/30"
+          title="Reset Circuit"
         >
           <RotateCcw className="w-4 h-4" />
           Reset
         </button>
         
-        <div className="w-px h-6 bg-border" />
+        <div className="w-px h-8 bg-border/50" />
         
         {!isRunning ? (
           <button
             onClick={onStart}
             disabled={!hasComponents}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold
-                       bg-success text-success-foreground hover:bg-success/90
-                       transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed
-                       shadow-sm hover:shadow-md"
+            className="btn-primary flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold
+                       text-success-foreground disabled:opacity-40 disabled:cursor-not-allowed
+                       disabled:transform-none disabled:shadow-none"
           >
             <Play className="w-4 h-4" />
             Start
@@ -107,9 +112,8 @@ export function SimulatorToolbar({
         ) : (
           <button
             onClick={onStop}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold
-                       bg-destructive text-destructive-foreground hover:bg-destructive/90
-                       transition-all duration-200 shadow-sm hover:shadow-md"
+            className="btn-danger flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold
+                       text-destructive-foreground"
           >
             <Square className="w-4 h-4" />
             Stop
