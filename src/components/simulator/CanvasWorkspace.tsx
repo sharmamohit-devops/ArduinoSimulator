@@ -177,14 +177,28 @@ export function CanvasWorkspace({
       {/* Empty state */}
       {components.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="text-center max-w-sm px-6">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-lg bg-muted flex items-center justify-center border border-border">
-              <Cpu className="w-8 h-8 text-muted-foreground" />
+          <div className="text-center max-w-md px-8 fade-in-up">
+            <div className="relative mb-6">
+              <div className="absolute inset-0 bg-primary/10 rounded-2xl blur-2xl" />
+              <div className="relative w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-primary/20 to-transparent border border-primary/30 flex items-center justify-center">
+                <Cpu className="w-10 h-10 text-primary" />
+              </div>
             </div>
-            <h3 className="text-base font-medium text-foreground mb-1">Build Your Circuit</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Drag components from the library. Start with an Arduino Uno, then add LEDs (D10), Buttons (D2), and Resistors.
+            <h3 className="text-xl font-bold text-foreground mb-2">Build Your Circuit</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Drag components from the library. Start with an <span className="text-primary font-medium">Arduino Uno</span>, 
+              then add <span className="text-amber-400 font-medium">LEDs</span> and <span className="text-violet-400 font-medium">Buttons</span>.
             </p>
+            <div className="mt-6 flex justify-center gap-2">
+              <span className="chip">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                LED → D10
+              </span>
+              <span className="chip">
+                <span className="w-1.5 h-1.5 rounded-full bg-violet-400" />
+                Button → D2
+              </span>
+            </div>
           </div>
         </div>
       )}
@@ -199,7 +213,7 @@ export function CanvasWorkspace({
         return (
           <div
             key={component.instanceId}
-            className={`absolute group ${
+            className={`absolute group component-float ${
               draggedComponent === component.instanceId ? 'z-50' : 'z-10'
             } ${isRunning && component.type === 'push-button' ? 'cursor-pointer' : 'cursor-move'}`}
             style={{
@@ -217,23 +231,23 @@ export function CanvasWorkspace({
                   e.stopPropagation();
                   onRemoveComponent(component.instanceId);
                 }}
-                className="absolute -top-2 -right-2 w-5 h-5 bg-destructive text-destructive-foreground rounded-full 
-                           flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity
-                           hover:bg-destructive/90 z-20"
+                className="absolute -top-2 -right-2 w-6 h-6 bg-destructive text-destructive-foreground rounded-full 
+                           flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200
+                           hover:scale-110 hover:bg-destructive/90 z-20 shadow-lg"
               >
-                <X className="w-3 h-3" />
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
             
             {/* Component label */}
             {component.type !== 'arduino-uno' && (
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-card border border-border px-2 py-0.5 rounded text-[10px] font-medium text-foreground whitespace-nowrap">
+              <div className="absolute -top-7 left-1/2 -translate-x-1/2 glass px-2.5 py-1 rounded-lg text-[10px] font-semibold text-foreground whitespace-nowrap shadow-lg">
                 {getComponentLabel(component.type, component)}
                 {component.pin && (
-                  <span className="ml-1 text-primary font-mono">D{component.pin}</span>
+                  <span className="ml-1.5 text-primary font-mono">D{component.pin}</span>
                 )}
                 {component.analogPin && (
-                  <span className="ml-1 text-primary font-mono">{component.analogPin}</span>
+                  <span className="ml-1.5 text-primary font-mono">{component.analogPin}</span>
                 )}
               </div>
             )}
@@ -277,11 +291,16 @@ export function CanvasWorkspace({
 
       {/* Instructions */}
       {!isRunning && components.length > 0 && (
-        <div className="absolute bottom-3 right-3 bg-card border border-border px-3 py-2 rounded text-xs text-muted-foreground">
+        <div className="absolute bottom-4 right-4 glass px-4 py-3 rounded-xl text-sm">
           {!hasArduino ? (
-            <span className="text-warning">⚠ Add an Arduino Uno to enable wiring</span>
+            <span className="text-warning flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-warning animate-pulse" />
+              Add an Arduino Uno to enable wiring
+            </span>
           ) : (
-            <span>Click <strong>Start</strong> to run simulation</span>
+            <span className="text-muted-foreground">
+              Press <kbd className="px-2 py-1 bg-primary/20 text-primary rounded-md text-xs font-mono mx-1 border border-primary/30">Start</kbd> to run simulation
+            </span>
           )}
         </div>
       )}

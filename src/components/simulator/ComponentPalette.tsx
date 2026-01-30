@@ -5,7 +5,7 @@ import { PushButtonIcon } from './icons/PushButtonIcon';
 import { ResistorIcon } from './icons/ResistorIcon';
 import { BuzzerIcon } from './icons/BuzzerIcon';
 import { PotentiometerIcon } from './icons/PotentiometerIcon';
-import { Cpu, GripVertical, CircuitBoard, Lightbulb, MousePointer2, Info } from 'lucide-react';
+import { Cpu, GripVertical, CircuitBoard, Lightbulb, MousePointer2, Info, Zap } from 'lucide-react';
 
 interface ComponentPaletteProps {
   onDragStart: (type: ComponentType) => void;
@@ -48,13 +48,13 @@ const getDefaultPin = (type: ComponentType): string | null => {
 const getCategoryIcon = (category: string) => {
   switch (category) {
     case 'board':
-      return <CircuitBoard className="w-3 h-3" />;
+      return <CircuitBoard className="w-3.5 h-3.5" />;
     case 'output':
-      return <Lightbulb className="w-3 h-3" />;
+      return <Lightbulb className="w-3.5 h-3.5" />;
     case 'input':
-      return <MousePointer2 className="w-3 h-3" />;
+      return <MousePointer2 className="w-3.5 h-3.5" />;
     case 'passive':
-      return <span className="text-[10px] font-mono">Ω</span>;
+      return <span className="text-[11px] font-mono font-bold">Ω</span>;
     default:
       return null;
   }
@@ -65,13 +65,28 @@ const getCategoryLabel = (category: string) => {
     case 'board':
       return 'Microcontroller';
     case 'output':
-      return 'Output Components';
+      return 'Output';
     case 'input':
-      return 'Input Components';
+      return 'Input';
     case 'passive':
-      return 'Passive Components';
+      return 'Passive';
     default:
       return category;
+  }
+};
+
+const getCategoryColor = (category: string) => {
+  switch (category) {
+    case 'board':
+      return 'text-primary';
+    case 'output':
+      return 'text-amber-400';
+    case 'input':
+      return 'text-violet-400';
+    case 'passive':
+      return 'text-emerald-400';
+    default:
+      return 'text-muted-foreground';
   }
 };
 
@@ -93,28 +108,35 @@ export function ComponentPalette({ onDragStart }: ComponentPaletteProps) {
   const categoryOrder = ['board', 'output', 'input', 'passive'];
 
   return (
-    <aside className="w-72 bg-sidebar border-r border-border flex flex-col h-full">
+    <aside className="w-80 sidebar-gradient border-r border-border/50 flex flex-col h-full">
       {/* Header */}
-      <div className="px-4 py-4 border-b border-border bg-gradient-to-b from-sidebar-accent/30 to-transparent">
-        <h2 className="text-sm font-semibold text-foreground tracking-tight flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-          Component Library
-        </h2>
-        <p className="text-[11px] text-muted-foreground mt-1">Drag components to canvas</p>
+      <div className="px-5 py-5 border-b border-border/50">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-gradient-to-br from-primary/20 to-transparent border border-primary/30 rounded-lg flex items-center justify-center">
+            <Zap className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h2 className="text-sm font-bold text-foreground tracking-tight">
+              Component Library
+            </h2>
+            <p className="text-[11px] text-muted-foreground">Drag to canvas</p>
+          </div>
+        </div>
       </div>
       
       {/* Component List */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
+      <div className="flex-1 overflow-y-auto px-4 py-5 space-y-6">
         {categoryOrder.map((category) => {
           const components = groupedComponents[category];
           if (!components) return null;
           
           return (
-            <div key={category}>
+            <div key={category} className="fade-in-up">
               {/* Category Header */}
-              <div className="flex items-center gap-2 mb-2.5 text-[11px] text-muted-foreground uppercase tracking-wider font-medium px-1">
+              <div className={`flex items-center gap-2 mb-3 text-[11px] uppercase tracking-wider font-semibold ${getCategoryColor(category)}`}>
                 {getCategoryIcon(category)}
                 <span>{getCategoryLabel(category)}</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-current/30 to-transparent ml-2" />
               </div>
               
               {/* Components */}
@@ -127,34 +149,35 @@ export function ComponentPalette({ onDragStart }: ComponentPaletteProps) {
                       key={component.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, component.id)}
-                      className="group relative p-3 bg-card border border-border rounded-lg cursor-grab 
-                                 hover:border-primary/50 hover:bg-card/80 transition-all duration-200
-                                 active:cursor-grabbing active:border-primary"
+                      className="group relative p-3.5 bg-card/80 border border-border/50 rounded-xl cursor-grab 
+                                 hover:border-primary/50 hover:bg-card transition-all duration-300
+                                 active:cursor-grabbing active:scale-[0.98] active:border-primary
+                                 hover:shadow-lg hover:shadow-primary/5"
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3.5">
                         {/* Icon */}
-                        <div className="flex-shrink-0 p-2 bg-secondary/50 rounded-md flex items-center justify-center min-w-[52px] min-h-[40px]">
+                        <div className="flex-shrink-0 p-2.5 bg-gradient-to-br from-secondary/80 to-secondary/40 rounded-lg flex items-center justify-center min-w-[56px] min-h-[44px] group-hover:from-primary/20 group-hover:to-primary/5 transition-all duration-300">
                           {getComponentIcon(component.id)}
                         </div>
                         
                         {/* Info */}
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                          <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
                             {component.name}
                           </h3>
                           <p className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">
                             {component.description}
                           </p>
                           {defaultPin && (
-                            <span className="inline-flex items-center gap-1 mt-1.5 text-[10px] font-mono 
-                                           bg-primary/10 text-primary px-2 py-0.5 rounded">
+                            <span className="chip mt-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                               Pin: {defaultPin}
                             </span>
                           )}
                         </div>
                         
                         {/* Drag handle */}
-                        <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           <GripVertical className="w-4 h-4 text-muted-foreground/50" />
                         </div>
                       </div>
@@ -168,19 +191,32 @@ export function ComponentPalette({ onDragStart }: ComponentPaletteProps) {
       </div>
       
       {/* Pin Info Footer */}
-      <div className="px-4 py-4 border-t border-border bg-gradient-to-t from-sidebar-accent/20 to-transparent">
-        <div className="flex items-start gap-2.5">
-          <Info className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-          <div className="text-[11px] text-muted-foreground space-y-1.5">
-            <p className="font-medium text-foreground/90">Default Pin Mapping</p>
-            <ul className="space-y-0.5 font-mono">
-              <li>LED → <span className="text-primary">D{DEFAULT_LED_PIN}</span></li>
-              <li>Button → <span className="text-primary">D{DEFAULT_BUTTON_PIN}</span></li>
-              <li>Buzzer → <span className="text-primary">D{DEFAULT_BUZZER_PIN}</span></li>
-            </ul>
-            <p className="text-muted-foreground/70 text-[10px] pt-1">
-              Digital Pins D2–D13 supported
-            </p>
+      <div className="px-5 py-5 border-t border-border/50 bg-gradient-to-t from-background/50 to-transparent">
+        <div className="p-4 rounded-xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+              <Info className="w-4 h-4 text-primary" />
+            </div>
+            <div className="text-[11px] space-y-2">
+              <p className="font-semibold text-foreground">Pin Mapping</p>
+              <div className="grid grid-cols-3 gap-2 font-mono text-[10px]">
+                <div className="flex flex-col items-center p-2 rounded-lg bg-secondary/50">
+                  <span className="text-muted-foreground">LED</span>
+                  <span className="text-primary font-bold">D{DEFAULT_LED_PIN}</span>
+                </div>
+                <div className="flex flex-col items-center p-2 rounded-lg bg-secondary/50">
+                  <span className="text-muted-foreground">Button</span>
+                  <span className="text-primary font-bold">D{DEFAULT_BUTTON_PIN}</span>
+                </div>
+                <div className="flex flex-col items-center p-2 rounded-lg bg-secondary/50">
+                  <span className="text-muted-foreground">Buzzer</span>
+                  <span className="text-primary font-bold">D{DEFAULT_BUZZER_PIN}</span>
+                </div>
+              </div>
+              <p className="text-muted-foreground/70 text-[10px]">
+                Supports Digital Pins D2–D13
+              </p>
+            </div>
           </div>
         </div>
       </div>

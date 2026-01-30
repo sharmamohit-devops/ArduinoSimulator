@@ -98,86 +98,194 @@
 }
 
 @layer components {
-  /* Clean engineering grid pattern */
+  /* Canvas with animated grid */
   .canvas-workspace {
     background-color: hsl(var(--canvas-bg));
     background-image: 
-      linear-gradient(hsl(var(--canvas-grid) / 0.5) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--canvas-grid) / 0.5) 1px, transparent 1px);
-    background-size: 20px 20px;
+      radial-gradient(circle at 50% 50%, hsl(var(--primary) / 0.03) 0%, transparent 50%),
+      linear-gradient(hsl(var(--canvas-grid) / 0.6) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--canvas-grid) / 0.6) 1px, transparent 1px);
+    background-size: 100% 100%, 24px 24px, 24px 24px;
   }
 
-  /* Component cards - minimal styling */
+  /* Component cards with hover effects */
   .component-card {
-    @apply bg-card border border-border rounded-md p-3 cursor-grab 
-           transition-colors duration-150 hover:border-primary/50;
+    @apply relative overflow-hidden;
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.8) 100%);
   }
 
-  .component-card:active {
-    @apply cursor-grabbing border-primary;
+  .component-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.1), transparent);
+    transition: left 0.5s ease;
   }
 
-  /* Simulation buttons - academic style */
-  .sim-btn-start {
-    @apply px-4 py-2 rounded-md font-medium text-sm transition-colors duration-150
-           bg-success text-success-foreground;
+  .component-card:hover::before {
+    left: 100%;
   }
 
-  .sim-btn-start:hover:not(:disabled) {
-    @apply bg-success/90;
+  /* Glowing border effect */
+  .glow-border {
+    position: relative;
   }
 
-  .sim-btn-start:disabled {
-    @apply opacity-40 cursor-not-allowed;
+  .glow-border::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.5), hsl(var(--primary) / 0.1), hsl(var(--primary) / 0.5));
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
-  .sim-btn-stop {
-    @apply px-4 py-2 rounded-md font-medium text-sm transition-colors duration-150
-           bg-destructive text-destructive-foreground;
+  .glow-border:hover::after {
+    opacity: 1;
   }
 
-  .sim-btn-stop:hover {
-    @apply bg-destructive/90;
+  /* Toolbar with gradient */
+  .toolbar-gradient {
+    background: linear-gradient(180deg, hsl(var(--toolbar-bg)) 0%, hsl(var(--background)) 100%);
+  }
+
+  /* Button styles with hover animations */
+  .btn-primary {
+    @apply relative overflow-hidden transition-all duration-300;
+    background: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(152 55% 35%) 100%);
+    box-shadow: 0 4px 15px hsl(var(--success) / 0.3);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px hsl(var(--success) / 0.4);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-danger {
+    @apply relative overflow-hidden transition-all duration-300;
+    background: linear-gradient(135deg, hsl(var(--destructive)) 0%, hsl(0 60% 45%) 100%);
+    box-shadow: 0 4px 15px hsl(var(--destructive) / 0.3);
+  }
+
+  .btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px hsl(var(--destructive) / 0.4);
+  }
+
+  /* Status badge animation */
+  .status-pulse {
+    animation: status-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes status-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
   }
 
   /* Code panel styling */
   .code-panel {
-    @apply bg-code text-code-text font-mono text-sm rounded-md overflow-hidden border border-border;
+    @apply font-mono text-sm rounded-lg overflow-hidden border border-border;
+    background: linear-gradient(180deg, hsl(var(--code-bg)) 0%, hsl(222 25% 4%) 100%);
   }
 
   .code-editor {
-    @apply w-full h-full bg-transparent text-code-text font-mono text-sm 
+    @apply w-full h-full bg-transparent font-mono text-sm 
            resize-none outline-none p-4 leading-relaxed;
+    color: hsl(var(--code-text));
   }
 
   /* Syntax highlighting */
-  .syntax-keyword { color: hsl(var(--code-keyword)); }
+  .syntax-keyword { color: hsl(var(--code-keyword)); font-weight: 500; }
   .syntax-function { color: hsl(var(--code-function)); }
   .syntax-string { color: hsl(var(--code-string)); }
   .syntax-comment { color: hsl(var(--code-comment)); font-style: italic; }
   .syntax-number { color: hsl(var(--code-number)); }
   .syntax-type { color: hsl(var(--code-type)); }
 
-  /* LED glow effects - clear ON/OFF states */
-  .led-on {
-    filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 12px currentColor);
+  /* LED glow animation */
+  .led-glow {
+    animation: led-glow 1.5s ease-in-out infinite;
   }
 
-  .led-off {
-    filter: none;
-    opacity: 0.4;
+  @keyframes led-glow {
+    0%, 100% { 
+      filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 12px currentColor);
+    }
+    50% { 
+      filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 20px currentColor);
+    }
   }
 
-  /* Status indicator */
-  .status-indicator {
-    @apply inline-flex items-center gap-2 px-3 py-1.5 rounded text-xs font-medium border;
+  /* Smooth fade-in for components */
+  .fade-in-up {
+    animation: fade-in-up 0.4s ease-out;
   }
 
-  .status-running {
-    @apply bg-success/10 text-success border-success/30;
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  .status-stopped {
-    @apply bg-muted text-muted-foreground border-border;
+  /* Floating effect for placed components */
+  .component-float {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .component-float:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Sidebar gradient */
+  .sidebar-gradient {
+    background: linear-gradient(180deg, hsl(var(--sidebar-background)) 0%, hsl(222 20% 6%) 100%);
+  }
+
+  /* Interactive chip */
+  .chip {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium
+           bg-primary/10 text-primary border border-primary/20
+           transition-all duration-200 hover:bg-primary/20 hover:border-primary/30;
+  }
+
+  /* Glass effect */
+  .glass {
+    background: hsl(var(--card) / 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  /* Animated underline */
+  .animated-underline {
+    position: relative;
+  }
+
+  .animated-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: hsl(var(--primary));
+    transition: width 0.3s ease;
+  }
+
+  .animated-underline:hover::after {
+    width: 100%;
   }
 }
