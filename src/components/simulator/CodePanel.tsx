@@ -1,5 +1,5 @@
 import { PlacedComponent } from '@/types/simulator';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Code, RotateCcw, Copy, Check } from 'lucide-react';
 
 interface CodePanelProps {
@@ -108,10 +108,174 @@ ${loopLines.join('\n') || '  // Main code here'}
 }`;
 }
 
+// VS Code Dark+ theme colors
+const VSCODE_COLORS = {
+  keyword: '#C586C0',      // Pink/purple for keywords
+  type: '#4EC9B0',         // Teal for types
+  function: '#DCDCAA',     // Yellow for functions
+  variable: '#9CDCFE',     // Light blue for variables
+  string: '#CE9178',       // Orange for strings
+  number: '#B5CEA8',       // Light green for numbers
+  comment: '#6A9955',      // Green for comments
+  operator: '#D4D4D4',     // Light gray for operators
+  bracket: '#FFD700',      // Gold for brackets
+  constant: '#4FC1FF',     // Bright blue for constants
+  macro: '#569CD6',        // Blue for preprocessor
+};
+
+// Syntax highlighting function
+function highlightCode(code: string): JSX.Element[] {
+  const lines = code.split('\n');
+  
+  return lines.map((line, lineIndex) => {
+    const tokens: JSX.Element[] = [];
+    let remaining = line;
+    let tokenIndex = 0;
+
+    // Helper to add token
+    const addToken = (text: string, color: string, bold = false) => {
+      tokens.push(
+        <span 
+          key={tokenIndex++} 
+          style={{ color, fontWeight: bold ? 600 : 400 }}
+        >
+          {text}
+        </span>
+      );
+    };
+
+    // Process the line
+    while (remaining.length > 0) {
+      let matched = false;
+
+      // Comments (// ...)
+      const commentMatch = remaining.match(/^(\/\/.*)/);
+      if (commentMatch) {
+        addToken(commentMatch[1], VSCODE_COLORS.comment);
+        remaining = remaining.slice(commentMatch[1].length);
+        matched = true;
+        continue;
+      }
+
+      // Preprocessor directives (#include, #define)
+      const macroMatch = remaining.match(/^(#\w+)/);
+      if (macroMatch) {
+        addToken(macroMatch[1], VSCODE_COLORS.macro, true);
+        remaining = remaining.slice(macroMatch[1].length);
+        matched = true;
+        continue;
+      }
+
+      // Strings ("...")
+      const stringMatch = remaining.match(/^("[^"]*")/);
+      if (stringMatch) {
+        addToken(stringMatch[1], VSCODE_COLORS.string);
+        remaining = remaining.slice(stringMatch[1].length);
+        matched = true;
+        continue;
+      }
+
+      // Keywords
+      const keywordMatch = remaining.match(/^(void|int|const|if|else|while|for|return|break|continue|switch|case|default)\b/);
+      if (keywordMatch) {
+        addToken(keywordMatch[1], VSCODE_COLORS.keyword, true);
+        remaining = remaining.slice(keywordMatch[1].length);
+        matched = true;
+        continue;
+      }
+
+      // Arduino types
+      const typeMatch = remaining.match(/^(boolean|byte|char|double|float|long|short|unsigned|String)\b/);
+      if (typeMatch) {
+        addToken(typeMatch[1], VSCODE_COLORS.type);
+        remaining = remaining.slice(typeMatch[1].length);
+        matched = true;
+        continue;
+      }
+
+      // Arduino constants
+      const constantMatch = remaining.match(/^(HIGH|LOW|INPUT|OUTPUT|INPUT_PULLUP|true|false|LED_BUILTIN)\b/);
+      if (constantMatch) {
+        addToken(constantMatch[1], VSCODE_COLORS.constant, true);
+        remaining = remaining.slice(constantMatch[1].length);
+        matched = true;
+        continue;
+      }
+
+      // User-defined constants (UPPERCASE with underscore)
+      const userConstMatch = remaining.match(/^([A-Z][A-Z0-9_]*)\b/);
+      if (userConstMatch) {
+        addToken(userConstMatch[1], VSCODE_COLORS.constant);
+        remaining = remaining.slice(userConstMatch[1].length);
+        matched = true;
+        continue;
+      }
+
+      // Arduino functions
+      const funcMatch = remaining.match(/^(pinMode|digitalWrite|digitalRead|analogWrite|analogRead|Serial|delay|millis|micros|begin|println|print|setup|loop)\b/);
+      if (funcMatch) {
+        addToken(funcMatch[1], VSCODE_COLORS.function);
+        remaining = remaining.slice(funcMatch[1].length);
+        matched = true;
+        continue;
+      }
+
+      // Numbers
+      const numMatch = remaining.match(/^(\d+)/);
+      if (numMatch) {
+        addToken(numMatch[1], VSCODE_COLORS.number);
+        remaining = remaining.slice(numMatch[1].length);
+        matched = true;
+        continue;
+      }
+
+      // Brackets and parentheses
+      const bracketMatch = remaining.match(/^([{}[\]()])/);
+      if (bracketMatch) {
+        addToken(bracketMatch[1], VSCODE_COLORS.bracket);
+        remaining = remaining.slice(1);
+        matched = true;
+        continue;
+      }
+
+      // Operators
+      const opMatch = remaining.match(/^([+\-*/%=<>!&|;,.])/);
+      if (opMatch) {
+        addToken(opMatch[1], VSCODE_COLORS.operator);
+        remaining = remaining.slice(1);
+        matched = true;
+        continue;
+      }
+
+      // Variables (camelCase or lowercase)
+      const varMatch = remaining.match(/^([a-z][a-zA-Z0-9]*)\b/);
+      if (varMatch) {
+        addToken(varMatch[1], VSCODE_COLORS.variable);
+        remaining = remaining.slice(varMatch[1].length);
+        matched = true;
+        continue;
+      }
+
+      // Default: single character
+      if (!matched) {
+        addToken(remaining[0], '#D4D4D4');
+        remaining = remaining.slice(1);
+      }
+    }
+
+    return (
+      <div key={lineIndex} className="leading-6">
+        {tokens.length > 0 ? tokens : <span>&nbsp;</span>}
+      </div>
+    );
+  });
+}
+
 export function CodePanel({ components, isRunning }: CodePanelProps) {
   const [code, setCode] = useState(DEFAULT_CODE);
   const [isEditing, setIsEditing] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showHighlight, setShowHighlight] = useState(true);
 
   // Update code when components change (only if not manually editing)
   useEffect(() => {
@@ -120,6 +284,8 @@ export function CodePanel({ components, isRunning }: CodePanelProps) {
       setCode(generatedCode);
     }
   }, [components, isEditing]);
+
+  const highlightedCode = useMemo(() => highlightCode(code), [code]);
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCode(e.target.value);
@@ -138,83 +304,116 @@ export function CodePanel({ components, isRunning }: CodePanelProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const lineNumbers = code.split('\n').length;
+
   return (
-    <div className="h-full flex flex-col bg-code rounded-lg border border-border/40 overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between px-3 py-2 bg-muted/30 border-b border-border/30">
-        <div className="flex items-center gap-2.5">
-          <div className="flex gap-1">
-            <div className="w-2.5 h-2.5 rounded-full bg-destructive/60" />
-            <div className="w-2.5 h-2.5 rounded-full bg-warning/60" />
-            <div className="w-2.5 h-2.5 rounded-full bg-success/60" />
+    <div className="h-full flex flex-col overflow-hidden rounded-lg border border-border/50" style={{ background: '#1E1E1E' }}>
+      {/* VS Code style header */}
+      <div className="flex items-center justify-between px-4 py-2" style={{ background: '#252526', borderBottom: '1px solid #3C3C3C' }}>
+        <div className="flex items-center gap-3">
+          {/* Traffic lights */}
+          <div className="flex gap-2">
+            <div className="w-3 h-3 rounded-full bg-[#FF5F57] hover:brightness-110 cursor-pointer" />
+            <div className="w-3 h-3 rounded-full bg-[#FEBC2E] hover:brightness-110 cursor-pointer" />
+            <div className="w-3 h-3 rounded-full bg-[#28C840] hover:brightness-110 cursor-pointer" />
           </div>
-          <div className="flex items-center gap-1.5">
-            <Code className="w-3.5 h-3.5 text-primary/70" />
-            <span className="text-xs font-medium text-foreground/80">sketch.ino</span>
+          {/* File tab */}
+          <div className="flex items-center gap-2 px-3 py-1 rounded" style={{ background: '#1E1E1E' }}>
+            <Code className="w-4 h-4" style={{ color: '#519ABA' }} />
+            <span className="text-sm font-medium" style={{ color: '#CCCCCC' }}>sketch.ino</span>
+            {isEditing && <span className="w-2 h-2 rounded-full bg-white/60" />}
           </div>
         </div>
         
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           {isRunning && (
-            <span className="text-[10px] text-success flex items-center gap-1 bg-success/15 px-2 py-0.5 rounded font-medium">
-              <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse" />
+            <span className="text-xs flex items-center gap-1.5 px-2.5 py-1 rounded" style={{ background: '#2D4F2D', color: '#4EC9B0' }}>
+              <span className="w-2 h-2 rounded-full bg-[#4EC9B0] animate-pulse" />
               RUNNING
             </span>
           )}
           
           {isEditing && (
-            <span className="text-[10px] text-warning bg-warning/15 px-2 py-0.5 rounded font-medium">
+            <span className="text-xs px-2.5 py-1 rounded" style={{ background: '#4D3D00', color: '#CCA700' }}>
               MODIFIED
             </span>
           )}
           
           <button
             onClick={handleReset}
-            className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-white/10 transition-colors"
+            style={{ color: '#CCCCCC' }}
             title="Reset to auto-generated code"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="w-4 h-4" />
           </button>
           
           <button
             onClick={handleCopy}
-            className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+            className="p-1.5 rounded hover:bg-white/10 transition-colors"
+            style={{ color: '#CCCCCC' }}
             title="Copy code"
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? <Check className="w-4 h-4" style={{ color: '#4EC9B0' }} /> : <Copy className="w-4 h-4" />}
           </button>
         </div>
       </div>
       
-      {/* Code Editor */}
-      <div className="flex-1 relative overflow-hidden">
+      {/* Code Editor with syntax highlighting */}
+      <div className="flex-1 relative overflow-hidden" style={{ background: '#1E1E1E' }}>
         {/* Line numbers */}
-        <div className="absolute left-0 top-0 bottom-0 w-10 bg-muted/20 border-r border-border/15 overflow-hidden pointer-events-none">
-          <div className="p-3 font-mono text-xs leading-relaxed text-muted-foreground/40">
-            {code.split('\n').map((_, i) => (
-              <div key={i} className="text-right pr-1.5">{i + 1}</div>
+        <div 
+          className="absolute left-0 top-0 bottom-0 w-12 overflow-hidden pointer-events-none select-none"
+          style={{ background: '#1E1E1E', borderRight: '1px solid #3C3C3C' }}
+        >
+          <div className="p-3 font-mono text-xs text-right pr-3" style={{ color: '#858585' }}>
+            {Array.from({ length: lineNumbers }, (_, i) => (
+              <div key={i} className="leading-6">{i + 1}</div>
             ))}
           </div>
         </div>
         
-        {/* Editor */}
+        {/* Syntax highlighted overlay */}
+        <div 
+          className="absolute left-12 top-0 right-0 bottom-0 p-3 font-mono text-sm overflow-auto pointer-events-none"
+          style={{ 
+            fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace",
+            color: '#D4D4D4',
+          }}
+        >
+          {showHighlight && highlightedCode}
+        </div>
+        
+        {/* Actual textarea for editing */}
         <textarea
           value={code}
           onChange={handleCodeChange}
-          className="w-full h-full bg-transparent text-code-text font-mono text-xs resize-none outline-none p-3 pl-14 leading-relaxed"
+          onFocus={() => setShowHighlight(true)}
+          className="absolute left-12 top-0 right-0 bottom-0 w-[calc(100%-3rem)] h-full bg-transparent font-mono text-sm resize-none outline-none p-3 leading-6"
+          style={{ 
+            fontFamily: "'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace",
+            color: 'transparent',
+            caretColor: '#AEAFAD',
+          }}
           spellCheck={false}
           placeholder="Write your Arduino code here..."
         />
       </div>
       
-      {/* Footer */}
-      <div className="px-3 py-1.5 bg-muted/20 border-t border-border/15 flex items-center justify-between">
-        <p className="text-[10px] text-muted-foreground">
-          {isEditing ? '✏️ Custom' : '🔄 Auto-generated'}
-        </p>
-        <p className="text-[10px] text-muted-foreground font-mono">
-          {code.split('\n').length} lines
-        </p>
+      {/* VS Code style footer */}
+      <div 
+        className="px-4 py-1.5 flex items-center justify-between text-xs"
+        style={{ background: '#007ACC', color: 'white' }}
+      >
+        <div className="flex items-center gap-4">
+          <span>{isEditing ? '✏️ Editing' : '⚡ Auto-generated'}</span>
+          <span>Arduino C++</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <span>Ln {lineNumbers}, Col 1</span>
+          <span>UTF-8</span>
+          <span>CRLF</span>
+        </div>
       </div>
     </div>
   );
