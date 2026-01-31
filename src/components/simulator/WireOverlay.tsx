@@ -176,6 +176,13 @@ export function WireOverlay({ components, wires, isRunning = false }: WireOverla
 
       {wirePaths.map((wire) => wire && (
         <g key={wire.id}>
+          {/* Hidden path for animation reference */}
+          <path
+            id={`wirePath-${wire.id}`}
+            d={wire.path}
+            fill="none"
+            stroke="none"
+          />
           {/* Wire shadow/outline for depth */}
           <path
             d={wire.path}
@@ -313,56 +320,53 @@ export function WireOverlay({ components, wires, isRunning = false }: WireOverla
           {/* Active flow animation - Current flows FROM Arduino TO Component */}
           {wire.isActive && (
             <>
-              {/* Outer glow particle */}
-              <circle r="4" fill={wire.color} opacity="0.4">
+              {/* Main particle - Arduino to Component */}
+              <circle r="4" fill={wire.color} opacity="0.5">
                 <animateMotion
-                  dur="0.6s"
+                  dur="0.8s"
                   repeatCount="indefinite"
-                  path={reversePath(wire.path)}
                   keyPoints="1;0"
                   keyTimes="0;1"
-                />
+                  calcMode="linear"
+                >
+                  <mpath href={`#wirePath-${wire.id}`} />
+                </animateMotion>
               </circle>
-              {/* Main particle */}
-              <circle r="3" fill="#ffffff" opacity="0.9">
+              <circle r="2.5" fill="#ffffff" opacity="0.9">
                 <animateMotion
-                  dur="0.6s"
+                  dur="0.8s"
                   repeatCount="indefinite"
-                  path={reversePath(wire.path)}
                   keyPoints="1;0"
                   keyTimes="0;1"
-                />
+                  calcMode="linear"
+                >
+                  <mpath href={`#wirePath-${wire.id}`} />
+                </animateMotion>
               </circle>
-              {/* Inner colored particle */}
-              <circle r="2" fill={wire.color}>
+              {/* Trailing particle */}
+              <circle r="3" fill={wire.color} opacity="0.4">
                 <animateMotion
-                  dur="0.6s"
+                  dur="0.8s"
                   repeatCount="indefinite"
-                  path={reversePath(wire.path)}
                   keyPoints="1;0"
                   keyTimes="0;1"
-                />
+                  calcMode="linear"
+                  begin="0.2s"
+                >
+                  <mpath href={`#wirePath-${wire.id}`} />
+                </animateMotion>
               </circle>
-              {/* Second trailing particle */}
-              <circle r="2.5" fill="#ffffff" opacity="0.6">
+              <circle r="1.5" fill="#ffffff" opacity="0.7">
                 <animateMotion
-                  dur="0.6s"
+                  dur="0.8s"
                   repeatCount="indefinite"
-                  path={reversePath(wire.path)}
                   keyPoints="1;0"
                   keyTimes="0;1"
-                  begin="0.15s"
-                />
-              </circle>
-              <circle r="1.5" fill={wire.color} opacity="0.8">
-                <animateMotion
-                  dur="0.6s"
-                  repeatCount="indefinite"
-                  path={reversePath(wire.path)}
-                  keyPoints="1;0"
-                  keyTimes="0;1"
-                  begin="0.15s"
-                />
+                  calcMode="linear"
+                  begin="0.2s"
+                >
+                  <mpath href={`#wirePath-${wire.id}`} />
+                </animateMotion>
               </circle>
             </>
           )}
@@ -383,11 +387,4 @@ function adjustBrightness(hex: string, factor: number): string {
   const newB = Math.min(255, Math.round(b * factor));
   
   return `rgb(${newR}, ${newG}, ${newB})`;
-}
-
-// Helper function to reverse path direction for animation (Arduino → Component)
-function reversePath(path: string): string {
-  // The animateMotion will use keyPoints="1;0" to reverse direction
-  // This keeps the path but animation goes from end to start
-  return path;
 }
