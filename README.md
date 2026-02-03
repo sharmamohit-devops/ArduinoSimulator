@@ -23,7 +23,7 @@ The simulator serves as a **visual and logical bridge** between circuit design a
 
 Access the deployed simulator here:
 
-👉 [https://mohit-fossee.lovable.app/](https://mohit-fossee.lovable.app/)
+👉 [https://arduinosimulator.vercel.app/](https://arduinosimulator.vercel.app/)
 
 The simulator runs entirely in the browser and does not require installation, external libraries, or physical Arduino hardware.
 
