@@ -23,7 +23,7 @@ The simulator serves as a **visual and logical bridge** between circuit design a
 
 Access the deployed simulator here:
 
-👉 [https://arduinosimulator.vercel.app/](https://arduinosimulator.vercel.app/)
+👉 https://arduino-simulator.vercel.app/
 
 The simulator runs entirely in the browser and does not require installation, external libraries, or physical Arduino hardware.
 
